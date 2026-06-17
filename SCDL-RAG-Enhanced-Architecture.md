@@ -51,7 +51,7 @@ graph TD
 **Integration Points**:
 - **Intent Recognition**: Parse user queries through ISRE semantic compression
 - **Resonance Matching**: Match query resonance with document resonance states
-- **Competitive Selection**: Use oscillatory dynamics to select best context
+- **Competitive Selection**: Use oscillatory dynamics to select context
 
 **Benefits for SCDL-RAG**:
 - Retrieval based on semantic intent, not just similarity
@@ -78,7 +78,7 @@ User Query
   → ISRE Intent Extraction (query semantics)
   → URCM Resonance Encoding (query resonance state)
   → Oscillatory Retrieval (resonance matching)
-  → Competitive Context Selection (best semantic fit)
+  → Competitive Context Selection (semantic fit)
   → Context Assembly
   → LLM Generation
 ```
@@ -166,4 +166,4 @@ class EnhancedSCDLRAG:
 
 **SCDL-RAG Enhanced**: A contradiction-aware retrieval architecture that combines proven semantic reasoning (ISRE) and oscillatory dynamics (URCM) to deliver enterprise-grade knowledge distillation and intent-aware retrieval for reliable AI systems.
 
-This positions SCDL-RAG as the commercial product with URCM and ISRE as the proven technological differentiators that make it superior to basic RAG systems.
+This positions SCDL-RAG as the commercial product with URCM and ISRE as the proven technological differentiators that make it more effective than basic RAG systems.

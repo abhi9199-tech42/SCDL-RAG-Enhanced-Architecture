@@ -1,6 +1,6 @@
 # Unified μ-Resonance Cognitive Mesh (URCM)
 
-A revolutionary artificial reasoning system that replaces discrete token-based processing with continuous frequency-based representations.
+A frequency-based artificial reasoning system that replaces discrete token-based processing with continuous frequency-based representations.
 
 ## Project Structure
 

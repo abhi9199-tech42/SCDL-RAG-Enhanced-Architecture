@@ -1,6 +1,6 @@
 # SCDL-RAG Architecture Documentation
 
-Welcome to the documentation for the Contradiction-Aware Retrieval Architecture (SCDL-RAG). This system is designed to provide reliable, contradiction-aware AI reasoning by combining advanced semantic compression with a resonance-based cognitive mesh.
+Welcome to the documentation for the Contradiction-Aware Retrieval Architecture (SCDL-RAG). This system is designed to provide reliable, contradiction-aware AI reasoning by combining semantic compression with a resonance-based cognitive mesh.
 
 ## Table of Contents
 

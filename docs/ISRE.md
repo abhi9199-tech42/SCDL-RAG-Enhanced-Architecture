@@ -5,7 +5,7 @@ The ISRE is the core component responsible for transforming raw content into com
 ## Key Features
 
 ### 1. Semantic Compression
-ISRE uses advanced NLP techniques to compress raw text into a dual representation:
+ISRE uses NLP techniques to compress raw text into a dual representation:
 - **Semantic Vector**: A high-dimensional vector capturing the latent meaning.
 - **Intent Graph**: A structured graph (DAG) representing the logical flow and key concepts.
 

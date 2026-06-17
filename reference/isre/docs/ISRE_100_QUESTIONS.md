@@ -337,4 +337,4 @@ It **solves** a major part of alignment. You can encode the "Human Values" as no
 Yes. Regulators could mandate that every AI must have an "Intent Audit Trail" (like ISRE's `trace_log`) to verify that safety rules weren't bypassed.
 
 ### 100. What happens if your core assumption is wrong?
-If it turns out that "thoughts" and "symbols" can't be separated from "language," then ISRE becomes a powerful specialized tool for robotics and logic, but perhaps not a general intelligence model. However, current results suggest the separation is not only possible but necessary.
+If it turns out that "thoughts" and "symbols" can't be separated from "language," then ISRE becomes a specialized tool for robotics and logic, but perhaps not a general intelligence model. However, current results suggest the separation is not only possible but necessary.
