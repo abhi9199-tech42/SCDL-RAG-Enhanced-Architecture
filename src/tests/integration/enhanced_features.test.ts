@@ -15,11 +15,23 @@ describe('Enhanced Features Integration Tests', () => {
           supportedLanguages: ['en', 'es', 'fr']
         },
         compression: {
+          enabled: true,
           optimizationEnabled: true,
-          adaptiveCompression: true
+          adaptiveCompression: true,
+          minSemanticDensity: 0.3,
+          maxTokens: 512
+        },
+        graph: {
+          maxDepth: 10,
+          minEdgeWeight: 0.1,
+          maxNodes: 100
         }
       },
       urcm: {
+        resonanceThreshold: 0.6,
+        contradictionSensitivity: 0.8,
+        maxOscillations: 10,
+        stabilizationFactor: 0.95,
         semanticDetection: {
           enabled: true,
           patternMatching: true,
@@ -27,16 +39,41 @@ describe('Enhanced Features Integration Tests', () => {
         }
       },
       performance: {
+        maxResponseTime: 1000,
+        maxMemoryUsage: 1024 * 1024 * 1024,
+        maxErrorRate: 0.05,
+        minThroughput: 10,
+        maxConcurrentRequests: 100,
         monitoring: {
           enabled: true,
-          intervalMs: 1000
+          intervalMs: 1000,
+          metricsRetention: 1000
+        },
+        optimization: {
+          autoOptimization: false,
+          recommendationThreshold: 0.5,
+          implementationDelay: 0
         }
       },
       audit: {
         enabled: true,
+        detailLevel: 'comprehensive',
+        retention: {
+          days: 30,
+          maxRecords: 10000,
+          compressionEnabled: true
+        },
         explainability: {
           enabled: true,
-          autoGeneration: true
+          autoGeneration: true,
+          expertReview: {
+            enabled: true,
+            thresholds: {
+              complexity: 0.7,
+              confidence: 0.8,
+              impact: 0.6
+            }
+          }
         }
       }
     });
@@ -322,7 +359,7 @@ describe('Enhanced Features Integration Tests', () => {
 
       // Medical domain should have high sensitivity
       if (contradictions.length > 0) {
-        const medicalContradictions = contradictions.filter(c => c.type === 'medical');
+        const medicalContradictions = contradictions.filter(c => c.sourceIds.some(id => id.includes('medical')));
         expect(medicalContradictions.length).toBeGreaterThan(0);
         
         // Medical contradictions should have high severity
@@ -375,8 +412,8 @@ describe('Enhanced Features Integration Tests', () => {
         expect(recommendation.category).toBeDefined();
         expect(recommendation.priority).toBeDefined();
         expect(recommendation.description).toBeDefined();
-        expect(recommendation.expectedImpact).toBeGreaterThanOrEqual(0);
-        expect(recommendation.expectedImpact).toBeLessThanOrEqual(1);
+        expect(recommendation.expectedImprovement).toBeGreaterThanOrEqual(0);
+        expect(recommendation.expectedImprovement).toBeLessThanOrEqual(1);
       }
     });
   });
@@ -446,7 +483,7 @@ describe('Enhanced Features Integration Tests', () => {
 
       // Check if complex medical content was flagged for expert review
       const medicalReviews = expertQueue.filter(item => 
-        item.category === 'MEDICAL' || item.description.toLowerCase().includes('medical')
+        item.description.toLowerCase().includes('medical')
       );
 
       if (medicalReviews.length > 0) {

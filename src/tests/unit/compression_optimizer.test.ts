@@ -453,8 +453,8 @@ describe('CompressionOptimizer Unit Tests', () => {
 
   // Helper method for calculating average priority
   function calculateAveragePriority(recommendations: any[]): number {
-    const priorityValues = { LOW: 1, MEDIUM: 2, HIGH: 3, CRITICAL: 4 };
-    const total = recommendations.reduce((sum, rec) => sum + priorityValues[rec.priority], 0);
+    const priorityValues: Record<string, number> = { LOW: 1, MEDIUM: 2, HIGH: 3, CRITICAL: 4 };
+    const total = recommendations.reduce((sum: number, rec: any) => sum + (priorityValues[rec.priority] || 0), 0);
     return total / recommendations.length;
   }
 });

@@ -1,21 +1,21 @@
-import { Contradiction, ResolutionStrategy } from '../types';
+import { Contradiction } from '../types';
+import { ResolutionPlan } from '../types';
 
 export interface ResolutionEngine {
-  resolve(contradictions: Contradiction[]): Promise<ResolutionStrategy[]>;
+  resolve(contradictions: Contradiction[]): Promise<ResolutionPlan[]>;
 }
 
 export class StandardResolutionEngine implements ResolutionEngine {
-  async resolve(contradictions: Contradiction[]): Promise<ResolutionStrategy[]> {
+  async resolve(contradictions: Contradiction[]): Promise<ResolutionPlan[]> {
     return contradictions.map(c => this.determineStrategy(c));
   }
 
-  private determineStrategy(c: Contradiction): ResolutionStrategy {
+  private determineStrategy(c: Contradiction): ResolutionPlan {
     // 1. Truth Maintenance (High confidence vs Low confidence)
-    // We assume we don't have the full node objects here, so we rely on severity/type
     if (c.severity > 0.8 && c.type === 'factual') {
       return {
         contradictionId: c.id,
-        action: 'deprecate', // Deprecate the lower confidence one (abstractly)
+        action: 'deprecate',
         confidence: 0.9,
         reasoning: "High severity factual conflict resolved by Truth Maintenance."
       };

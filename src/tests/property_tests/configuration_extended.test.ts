@@ -23,7 +23,7 @@ describe('Property 16: Configuration Validation and Application (Extended)', () 
         fc.record({
           // ISRE multi-language configuration
           multiLanguageEnabled: fc.boolean(),
-          consistencyThreshold: fc.float({ min: 0, max: 1, noNaN: true, noInfinity: true }),
+          consistencyThreshold: fc.float({ min: 0, max: 1, noNaN: true }),
           autoCorrection: fc.boolean(),
           supportedLanguages: fc.array(fc.constantFrom('en', 'es', 'fr', 'de', 'zh', 'ja'), { minLength: 1, maxLength: 6 }),
           
@@ -35,21 +35,21 @@ describe('Property 16: Configuration Validation and Application (Extended)', () 
           semanticDetectionEnabled: fc.boolean(),
           patternMatching: fc.boolean(),
           domainSpecificRules: fc.boolean(),
-          contradictionSensitivity: fc.float({ min: 0, max: 1, noNaN: true, noInfinity: true }),
+          contradictionSensitivity: fc.float({ min: 0, max: 1, noNaN: true }),
           maxOscillations: fc.integer({ min: 1, max: 100 }),
           
           // Performance monitoring
           performanceMonitoringEnabled: fc.boolean(),
           maxResponseTime: fc.integer({ min: 100, max: 10000 }),
-          maxErrorRate: fc.float({ min: 0, max: 1, noNaN: true, noInfinity: true }),
+          maxErrorRate: fc.float({ min: 0, max: 1, noNaN: true }),
           monitoringInterval: fc.integer({ min: 1000, max: 60000 }),
           
           // Scaling configuration
           horizontalScalingEnabled: fc.boolean(),
           minInstances: fc.integer({ min: 1, max: 5 }),
           maxInstances: fc.integer({ min: 5, max: 20 }),
-          scaleUpThreshold: fc.float({ min: 0, max: 1, noNaN: true, noInfinity: true }),
-          scaleDownThreshold: fc.float({ min: 0, max: 1, noNaN: true, noInfinity: true }),
+          scaleUpThreshold: fc.float({ min: 0, max: 1, noNaN: true }),
+          scaleDownThreshold: fc.float({ min: 0, max: 1, noNaN: true }),
           
           // Cache configuration
           semanticCacheEnabled: fc.boolean(),
@@ -62,7 +62,7 @@ describe('Property 16: Configuration Validation and Application (Extended)', () 
           auditDetailLevel: fc.constantFrom('minimal', 'standard', 'comprehensive'),
           explainabilityEnabled: fc.boolean(),
           expertReviewEnabled: fc.boolean(),
-          complexityThreshold: fc.float({ min: 0, max: 1, noNaN: true, noInfinity: true }),
+          complexityThreshold: fc.float({ min: 0, max: 1, noNaN: true }),
           
           // API configuration
           authenticationEnabled: fc.boolean(),
@@ -182,17 +182,17 @@ describe('Property 16: Configuration Validation and Application (Extended)', () 
     await fc.assert(
       fc.property(
         fc.record({
-          invalidConsistencyThreshold: fc.float({ min: -1, max: Math.fround(-0.1), noNaN: true, noInfinity: true }).chain(val => fc.constant(val))
-            .chain(() => fc.float({ min: Math.fround(1.1), max: 2, noNaN: true, noInfinity: true })),
+          invalidConsistencyThreshold: fc.float({ min: -1, max: Math.fround(-0.1), noNaN: true }).chain(val => fc.constant(val))
+            .chain(() => fc.float({ min: Math.fround(1.1), max: 2, noNaN: true })),
           invalidMaxOscillations: fc.integer({ min: -10, max: 0 }),
           invalidMaxResponseTime: fc.integer({ min: 1, max: 99 }),
-          invalidErrorRate: fc.float({ min: -1, max: Math.fround(-0.1), noNaN: true, noInfinity: true }).chain(val => fc.constant(val))
-            .chain(() => fc.float({ min: Math.fround(1.1), max: 2, noNaN: true, noInfinity: true })),
+          invalidErrorRate: fc.float({ min: -1, max: Math.fround(-0.1), noNaN: true }).chain(val => fc.constant(val))
+            .chain(() => fc.float({ min: Math.fround(1.1), max: 2, noNaN: true })),
           invalidMinInstances: fc.integer({ min: -5, max: 0 }),
           invalidCacheSize: fc.integer({ min: -100, max: 0 }),
           invalidCacheTtl: fc.integer({ min: 1, max: 999 }),
-          invalidComplexityThreshold: fc.float({ min: -1, max: Math.fround(-0.1), noNaN: true, noInfinity: true }).chain(val => fc.constant(val))
-            .chain(() => fc.float({ min: Math.fround(1.1), max: 2, noNaN: true, noInfinity: true })),
+          invalidComplexityThreshold: fc.float({ min: -1, max: Math.fround(-0.1), noNaN: true }).chain(val => fc.constant(val))
+            .chain(() => fc.float({ min: Math.fround(1.1), max: 2, noNaN: true })),
           invalidRateLimit: fc.integer({ min: -10, max: 0 }),
           emptySupportedLanguages: fc.constant([])
         }),
@@ -282,7 +282,7 @@ describe('Property 16: Configuration Validation and Application (Extended)', () 
           expect(() => configManager.updateConfig({
             isre: {
               multiLanguage: {
-                supportedLanguages: invalidConfig.emptySupportedLanguages
+                supportedLanguages: [...invalidConfig.emptySupportedLanguages]
               }
             }
           })).toThrow(/supportedLanguages/);
@@ -373,7 +373,7 @@ describe('Property 16: Configuration Validation and Application (Extended)', () 
           rateLimitRequests: fc.integer({ min: 10, max: 500 }),
           auditDetailLevel: fc.constantFrom('minimal', 'standard', 'comprehensive'),
           monitoringInterval: fc.integer({ min: 1000, max: 30000 }),
-          consistencyThreshold: fc.float({ min: Math.fround(0.5), max: Math.fround(0.95), noNaN: true, noInfinity: true }),
+          consistencyThreshold: fc.float({ min: Math.fround(0.5), max: Math.fround(0.95), noNaN: true }),
           
           // Non-hot-reloadable (critical) configurations
           port: fc.integer({ min: 3000, max: 8000 }),
@@ -438,7 +438,7 @@ describe('Property 16: Configuration Validation and Application (Extended)', () 
       fc.property(
         fc.record({
           domain: fc.constantFrom('medical', 'legal', 'financial', 'general'),
-          qualityThreshold: fc.float({ min: Math.fround(0.5), max: Math.fround(0.99), noNaN: true, noInfinity: true }),
+          qualityThreshold: fc.float({ min: Math.fround(0.5), max: Math.fround(0.99), noNaN: true }),
           auditRequired: fc.boolean(),
           expertReviewRequired: fc.boolean()
         }),

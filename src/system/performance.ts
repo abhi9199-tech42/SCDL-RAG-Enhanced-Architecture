@@ -308,8 +308,7 @@ export class PerformanceMonitor extends EventEmitter {
     
     if (recentMetrics.length === 0) return 0;
     
-    const totalRequests = Array.from(this.requestCounters.values()).reduce((sum, count) => sum + count, 0);
-    return totalRequests / 60; // Requests per second
+    return recentMetrics.length / 60; // Requests per second based on recent activity
   }
 
   private getCurrentConcurrentRequests(): number {

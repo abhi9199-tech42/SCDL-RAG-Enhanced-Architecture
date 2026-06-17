@@ -15,6 +15,9 @@ export interface IntentNode {
   confidence: number;
   attributes: Record<string, any>;
   children?: IntentNode[];
+  intentType?: string;
+  semanticWeight?: number;
+  weight?: number;
 }
 
 export interface SemanticRelation {
@@ -77,10 +80,13 @@ export interface ISREProcessor {
 // --- URCM Types ---
 
 export interface ResonancePattern {
+  id?: string;
   frequency: number;
   amplitude: number;
   phase: number;
-  sourceIds: string[];
+  sourceIds?: string[];
+  semanticIds?: string[];
+  stability?: number;
 }
 
 export interface FrequencyMapping {
@@ -99,9 +105,17 @@ export interface ConvergenceEvidence {
 
 export interface Resolution {
   contradictionId: string;
-  resolvedSemanticUnit: SemanticUnit;
-  convergenceEvidence: ConvergenceEvidence;
-  deterministicHash: string;
+  resolvedSemanticUnit?: SemanticUnit;
+  convergenceEvidence?: ConvergenceEvidence;
+  deterministicHash?: string;
+  outcome?: 'resolved' | 'flagged' | 'split';
+  confidence?: number;
+  resonanceStability?: number;
+  convergenceMetrics?: {
+    iterations: number;
+    finalError: number;
+    stabilityScore: number;
+  };
 }
 
 export interface CoherentContext {
@@ -112,17 +126,17 @@ export interface CoherentContext {
 
 export interface Contradiction {
   id: string;
-  conflictingUnits: SemanticUnit[];
-  contradictionType: ContradictionType;
-  severity: number;
-  resolutionStrategy: ResolutionStrategy;
   sourceIds: string[];
   description: string;
+  severity: number;
   type: ContradictionType;
   detectionConfidence: number;
+  conflictingUnits?: SemanticUnit[];
+  contradictionType?: ContradictionType;
+  resolutionStrategy?: ResolutionStrategy;
 }
 
-export type ContradictionType = 'factual' | 'logical' | 'temporal' | 'sentiment';
+export type ContradictionType = 'factual' | 'logical' | 'temporal' | 'sentiment' | 'semantic';
 export type ResolutionStrategy = 'latest_wins' | 'source_authority' | 'consensus' | 'manual_review';
 
 export interface URCMProcessor {

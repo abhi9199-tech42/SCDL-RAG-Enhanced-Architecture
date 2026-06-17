@@ -6,12 +6,12 @@ import {
   ResonancePattern,
   Resolution,
   CoherentContext,
-  SemanticUnit
+  SemanticUnit,
+  Contradiction
 } from '../types';
 import { 
   ResonanceField, 
-  Contradiction, 
-  ResolutionStrategy 
+  ResolutionPlan
 } from './types';
 import { ResonanceEncoder } from './core/resonance';
 import { AttractorNetwork } from './core/attractor';
@@ -107,8 +107,10 @@ export class URCMProcessorImpl implements URCMProcessor {
         semantics: { 
           id, 
           semanticVector: new Array(128).fill(0).map(() => Math.random()),
-          intentGraph: { nodes: [], edges: [] },
+          intentNodes: [],
+          intentGraph: { nodes: [], edges: [], rootIntent: '', confidenceScore: 1.0 },
           sourceReferences: [],
+          compressionRatio: 1.0,
           languageAgnosticHash: id
         }
       }));
@@ -142,7 +144,7 @@ export class URCMProcessorImpl implements URCMProcessor {
         outcome,
         confidence,
         resonanceStability: resonancePatterns.length > 0 ? 
-          resonancePatterns.reduce((sum, p) => sum + p.stability, 0) / resonancePatterns.length : 0.5,
+          resonancePatterns.reduce((sum, p) => sum + (p.stability ?? 0.5), 0) / resonancePatterns.length : 0.5,
         convergenceMetrics: {
           iterations: 50,
           finalError: 0.01,
@@ -210,7 +212,7 @@ export class URCMProcessorImpl implements URCMProcessor {
     return contradictions;
   }
 
-  async resolveContradictions(contradictions: Contradiction[]): Promise<ResolutionStrategy[]> {
+  async resolveContradictions(contradictions: Contradiction[]): Promise<ResolutionPlan[]> {
     return this.resolutionEngine.resolve(contradictions);
   }
 }

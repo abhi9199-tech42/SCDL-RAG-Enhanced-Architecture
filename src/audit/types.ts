@@ -1,4 +1,4 @@
-export type DecisionType = 'retrieval' | 'contradiction_resolution' | 'context_assembly' | 'deduplication' | 'ingestion';
+export type DecisionType = 'retrieval' | 'contradiction_resolution' | 'context_assembly' | 'deduplication' | 'ingestion' | 'expert_review_completion' | 'content_ingestion';
 
 export interface DecisionEvidence {
   factor: string;
@@ -6,6 +6,7 @@ export interface DecisionEvidence {
   description: string;
   sourceId?: string;
   value?: any;
+  confidence?: number;
 }
 
 export interface DecisionRecord {

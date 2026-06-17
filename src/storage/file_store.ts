@@ -26,6 +26,20 @@ export class FileVectorStore implements VectorStore {
         this.save();
       }
     }, 5000);
+
+    // Ensure cleanup on process exit
+    const cleanup = () => {
+      if (this.saveInterval) {
+        clearInterval(this.saveInterval);
+        this.saveInterval = null;
+      }
+      if (this.isDirty) {
+        this.save();
+      }
+    };
+    process.on('exit', cleanup);
+    process.on('SIGINT', () => { cleanup(); process.exit(0); });
+    process.on('SIGTERM', () => { cleanup(); process.exit(0); });
   }
 
   private load(): void {
@@ -114,12 +128,9 @@ export class FileVectorStore implements VectorStore {
   }
 
   private cosineSimilarity(v1: number[], v2: number[]): number {
-    if (v1.length !== v2.length) {
-      const len = Math.min(v1.length, v2.length);
-      if (len === 0) return 0;
-    }
-    
     const len = Math.min(v1.length, v2.length);
+    if (len === 0) return 0;
+    
     let dot = 0;
     let mag1 = 0;
     let mag2 = 0;

@@ -1,6 +1,5 @@
 import { DecisionRecord, AuditTrail } from './types';
-import { SemanticUnit, IntentGraph } from '../types';
-import { Contradiction, ResolutionStrategy } from '../urcm/types';
+import { SemanticUnit, IntentGraph, IntentNode, Contradiction, ResolutionStrategy } from '../types';
 
 export interface ExplanationContext {
   decisionChain: Decision[];
@@ -403,12 +402,12 @@ export class ExplainableAISystem {
         },
         {
           factor: 'candidate_selection_quality',
-          value: candidateSelection?.selectionQuality || 0.85,
+          value: (candidateSelection as any)?.selectionQuality || 0.85,
           description: 'Quality of candidate selection process'
         },
         {
           factor: 'ranking_accuracy',
-          value: rankingExplanation?.rankingAccuracy || 0.9,
+          value: (rankingExplanation as any)?.rankingAccuracy || 0.9,
           description: 'Accuracy of result ranking'
         }
       ]
@@ -927,7 +926,7 @@ export class ExplainableAISystem {
     ];
   }
 
-  private async generateResolutionJustification(contradiction: Contradiction, resolution: ResolutionStrategy): Promise<string> {
+  private async generateResolutionJustification(contradiction: Contradiction, resolution: any): Promise<string> {
     let justification = `Resolution strategy '${resolution.action}' selected for contradiction ${contradiction.id}.\n\n`;
     
     justification += `Reasoning: ${resolution.reasoning}\n`;
@@ -1437,7 +1436,8 @@ export class ExplainableAISystem {
           weight: 1.0,
           description: resolution,
           sourceId: reviewId
-        }]
+        }],
+        confidence: 1.0
       });
       
       // Remove from queue

@@ -24,7 +24,7 @@ describe('Property 18: Compression Ratio Optimization Effectiveness', () => {
           content: fc.string({ minLength: 50, maxLength: 6000 }),
           contentType: fc.constantFrom('TEXT', 'CODE', 'TECHNICAL', 'CONVERSATIONAL'),
           domain: fc.string({ minLength: 3, maxLength: 20 }),
-          qualityThreshold: fc.float({ min: Math.fround(0.5), max: Math.fround(0.95), noNaN: true, noInfinity: true })
+          qualityThreshold: fc.float({ min: Math.fround(0.5), max: Math.fround(0.95), noNaN: true })
         }),
         async ({ content, contentType, domain, qualityThreshold }) => {
           const rawContent: RawContent = {
@@ -93,8 +93,8 @@ describe('Property 18: Compression Ratio Optimization Effectiveness', () => {
       fc.asyncProperty(
         fc.record({
           content: fc.string({ minLength: 100, maxLength: 500 }),
-          currentRatio: fc.float({ min: Math.fround(0.1), max: Math.fround(0.9), noNaN: true, noInfinity: true }),
-          targetRatio: fc.float({ min: Math.fround(0.05), max: Math.fround(0.8), noNaN: true, noInfinity: true })
+          currentRatio: fc.float({ min: Math.fround(0.1), max: Math.fround(0.9), noNaN: true }),
+          targetRatio: fc.float({ min: Math.fround(0.05), max: Math.fround(0.8), noNaN: true })
         }),
         async ({ content, currentRatio, targetRatio: _targetRatio }) => {
           const rawContent: RawContent = {
@@ -243,8 +243,8 @@ describe('Property 18: Compression Ratio Optimization Effectiveness', () => {
       fc.asyncProperty(
         fc.record({
           content: fc.string({ minLength: 100, maxLength: 600 }),
-          currentEfficiency: fc.float({ min: Math.fround(0.1), max: Math.fround(0.9), noNaN: true, noInfinity: true }),
-          targetEfficiency: fc.float({ min: Math.fround(0.5), max: Math.fround(0.95), noNaN: true, noInfinity: true })
+          currentEfficiency: fc.float({ min: Math.fround(0.1), max: Math.fround(0.9), noNaN: true }),
+          targetEfficiency: fc.float({ min: Math.fround(0.5), max: Math.fround(0.95), noNaN: true })
         }),
         async ({ content, currentEfficiency, targetEfficiency }) => {
           const rawContent: RawContent = {
@@ -379,9 +379,9 @@ describe('Property 18: Compression Ratio Optimization Effectiveness', () => {
           // Each domain should have consistent characteristics
           for (const [_domain, domainMetrics] of domainGroups) {
             if (domainMetrics.length >= 2) {
-              const ratios = domainMetrics.map(m => m.compressionRatio);
-              const avgRatio = ratios.reduce((sum, r) => sum + r, 0) / ratios.length;
-              const variance = ratios.reduce((sum, r) => sum + Math.pow(r - avgRatio, 2), 0) / ratios.length;
+              const ratios = domainMetrics.map((m: any) => m.compressionRatio);
+              const avgRatio = ratios.reduce((sum: number, r: number) => sum + r, 0) / ratios.length;
+              const variance = ratios.reduce((sum: number, r: number) => sum + Math.pow(r - avgRatio, 2), 0) / ratios.length;
               
               // Variance within domain depends heavily on content size (small files = high ratio).
               // Since we have mixed sizes, high variance is expected.
@@ -396,13 +396,13 @@ describe('Property 18: Compression Ratio Optimization Effectiveness', () => {
             if (!typeGroups.has(metric.contentType)) {
               typeGroups.set(metric.contentType, []);
             }
-            typeGroups.get(metric.contentType).push(metric);
+            typeGroups.get(metric.contentType)!.push(metric);
           }
 
           // CODE content should generally have higher quality requirements
-          if (typeGroups.has('CODE') && typeGroups.get('CODE').length > 0) {
-            const codeMetrics = typeGroups.get('CODE');
-            const avgCodeQuality = codeMetrics.reduce((sum, m) => sum + m.qualityScore, 0) / codeMetrics.length;
+          if (typeGroups.has('CODE') && typeGroups.get('CODE')!.length > 0) {
+            const codeMetrics = typeGroups.get('CODE')!;
+            const avgCodeQuality = codeMetrics.reduce((sum: number, m: any) => sum + m.qualityScore, 0) / codeMetrics.length;
             expect(avgCodeQuality).toBeGreaterThan(0.7);
           }
         }

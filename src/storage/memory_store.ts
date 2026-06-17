@@ -44,16 +44,9 @@ export class InMemoryVectorStore implements VectorStore {
   }
 
   private cosineSimilarity(v1: number[], v2: number[]): number {
-    if (v1.length !== v2.length) {
-      // Handle dimension mismatch gracefully, or throw. 
-      // For now, assume simplified truncation or padding if needed, or just 0.
-      const len = Math.min(v1.length, v2.length);
-      // In strict mode we might throw, but let's be robust
-      if (len === 0) return 0;
-    }
-    
-    // Assume vectors are roughly aligned if created by same encoder
     const len = Math.min(v1.length, v2.length);
+    if (len === 0) return 0;
+    
     let dot = 0;
     let mag1 = 0;
     let mag2 = 0;

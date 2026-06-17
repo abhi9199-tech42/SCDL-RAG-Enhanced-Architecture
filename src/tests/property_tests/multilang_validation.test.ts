@@ -24,7 +24,7 @@ describe('Property 17: Multi-Language Consistency Validation', () => {
         fc.record({
           english: fc.record({
             id: fc.string({ minLength: 1, maxLength: 20 }),
-            semanticVector: fc.array(fc.float({ min: -1, max: 1, noNaN: true, noInfinity: true }), { minLength: 128, maxLength: 128 }),
+            semanticVector: fc.array(fc.float({ min: -1, max: 1, noNaN: true }), { minLength: 128, maxLength: 128 }),
             intentNodes: fc.array(fc.record({
               id: fc.string({ minLength: 1, maxLength: 10 }),
               label: fc.string({ minLength: 1, maxLength: 20 }),
@@ -41,7 +41,7 @@ describe('Property 17: Multi-Language Consistency Validation', () => {
           }),
           spanish: fc.record({
             id: fc.string({ minLength: 1, maxLength: 20 }),
-            semanticVector: fc.array(fc.float({ min: -1, max: 1, noNaN: true, noInfinity: true }), { minLength: 128, maxLength: 128 }),
+            semanticVector: fc.array(fc.float({ min: -1, max: 1, noNaN: true }), { minLength: 128, maxLength: 128 }),
             intentNodes: fc.array(fc.record({
               id: fc.string({ minLength: 1, maxLength: 10 }),
               label: fc.string({ minLength: 1, maxLength: 20 }),
@@ -117,7 +117,7 @@ describe('Property 17: Multi-Language Consistency Validation', () => {
     await fc.assert(
       fc.asyncProperty(
         fc.record({
-          baseVector: fc.array(fc.float({ min: -1, max: 1, noNaN: true, noInfinity: true }), { minLength: 128, maxLength: 128 }),
+          baseVector: fc.array(fc.float({ min: -1, max: 1, noNaN: true }), { minLength: 128, maxLength: 128 }),
           driftAmount: fc.float({ min: 0, max: 2 })
         }),
         async ({ baseVector, driftAmount }) => {

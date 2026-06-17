@@ -1,5 +1,4 @@
-import { IntentGraph } from '../../types';
-import { Contradiction } from '../types';
+import { IntentGraph, Contradiction } from '../../types';
 import { ResonanceEncoder } from '../core/resonance';
 
 export interface ContradictionDetector {

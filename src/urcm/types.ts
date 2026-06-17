@@ -1,3 +1,5 @@
+import { Contradiction, ResolutionStrategy } from '../types';
+
 export interface ResonanceField {
   sourceId: string;
   targetId: string;
@@ -7,16 +9,7 @@ export interface ResonanceField {
   phaseAlignment: number; // 0 to 2PI
 }
 
-export interface Contradiction {
-  id: string;
-  sourceIds: string[];
-  description: string;
-  severity: number; // 0 to 1
-  type: 'logical' | 'temporal' | 'factual' | 'semantic';
-  detectionConfidence: number;
-}
-
-export interface ResolutionStrategy {
+export interface ResolutionPlan {
   contradictionId: string;
   action: 'merge' | 'split' | 'deprecate' | 'flag';
   confidence: number;
@@ -39,3 +32,5 @@ export interface MeshNodeState {
   couplingStrength: number;
   neighbors: string[];
 }
+
+export type { Contradiction, ResolutionStrategy };

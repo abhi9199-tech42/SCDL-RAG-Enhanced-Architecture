@@ -9,11 +9,11 @@ import { SemanticDeduplicationEngine } from '../storage/deduplication';
 import { IntentAwareRetrievalEngine } from '../retrieval/engine';
 import { ContextAssemblerImpl } from '../context/assembler';
 import { InMemoryAuditTrail } from '../audit/trail';
-import { ExplainableAISystem } from '../audit/explainable';
+import { ExplainableAISystem, ReviewPriority, ReviewCategory } from '../audit/explainable';
 import { MultiLanguageValidator } from '../isre/multilang/validator';
 import { CompressionOptimizer } from '../isre/compression/optimizer';
 import { SemanticContradictionDetector } from '../urcm/contradiction/semantic_detector';
-import { PerformanceMonitor, HorizontalScalingManager, CircuitBreaker, CacheManager, OperationType } from './performance';
+import { PerformanceMonitor, HorizontalScalingManager, CircuitBreaker, CacheManager, OperationType, CacheType, EvictionPolicy } from './performance';
 import { createApp } from '../api/server';
 import { logger } from '../utils/logger';
 import { Express } from 'express';
@@ -24,7 +24,7 @@ export class SCDLSystemImpl extends EventEmitter implements SCDLSystem {
   public config: SystemConfig;
   public isreProcessor!: ISREProcessorImpl;
   public urcmProcessor!: URCMProcessorImpl;
-  public vectorStore!: InMemoryVectorStore;
+  public vectorStore!: FileVectorStore;
   public deduplicationEngine!: SemanticDeduplicationEngine;
   public retrievalEngine!: IntentAwareRetrievalEngine;
   public contextAssembler!: ContextAssemblerImpl;
@@ -45,7 +45,7 @@ export class SCDLSystemImpl extends EventEmitter implements SCDLSystem {
   constructor(initialConfig?: Partial<SystemConfig>) {
     super();
     if (initialConfig) {
-      configManager.updateConfig(initialConfig as any);
+      configManager.updateConfig(initialConfig);
     }
     this.config = configManager.getConfig();
     
@@ -82,10 +82,10 @@ export class SCDLSystemImpl extends EventEmitter implements SCDLSystem {
 
     // 3. Initialize Cache Manager
     this.cacheManager = new CacheManager({
-      cacheType: 'IN_MEMORY' as any,
+      cacheType: CacheType.IN_MEMORY,
       maxSize: 1000,
       ttl: 300000, // 5 minutes
-      evictionPolicy: 'LRU' as any,
+      evictionPolicy: EvictionPolicy.LRU,
       compressionEnabled: true,
       distributedCache: false
     });
@@ -218,9 +218,9 @@ export class SCDLSystemImpl extends EventEmitter implements SCDLSystem {
       if (alert.value > alert.threshold * 1.5) {
         this.explainableAI.generateExpertReviewContext(
           alert,
-          'HIGH' as any,
-          'SYSTEM_PERFORMANCE' as any
-        );
+          ReviewPriority.HIGH,
+          ReviewCategory.QUALITY_ASSURANCE
+        ).catch(err => logger.error('Failed to generate expert review:', err));
       }
     });
 
@@ -249,7 +249,7 @@ export class SCDLSystemImpl extends EventEmitter implements SCDLSystem {
     
     try {
       // Use circuit breaker for resilience
-      return await this.circuitBreaker.execute(async () => {
+      const result = await this.circuitBreaker.execute(async () => {
         // 1. Optimize compression
         const optimizedCompression = await this.compressionOptimizer.optimizeCompressionRatio(content);
         
@@ -335,6 +335,13 @@ export class SCDLSystemImpl extends EventEmitter implements SCDLSystem {
           processingTime: Date.now() - startTime
         };
       });
+      // Record success after circuit breaker succeeds
+      this.performanceMonitor.recordOperation(
+        OperationType.SEMANTIC_COMPRESSION,
+        Date.now() - startTime,
+        true
+      );
+      return result;
     } catch (error) {
       // Record performance metrics for failed operations
       this.performanceMonitor.recordOperation(
@@ -343,13 +350,6 @@ export class SCDLSystemImpl extends EventEmitter implements SCDLSystem {
         false
       );
       throw error;
-    } finally {
-      // Record performance metrics for successful operations
-      this.performanceMonitor.recordOperation(
-        OperationType.SEMANTIC_COMPRESSION,
-        Date.now() - startTime,
-        true
-      );
     }
   }
 
@@ -357,7 +357,7 @@ export class SCDLSystemImpl extends EventEmitter implements SCDLSystem {
     const startTime = Date.now();
     
     try {
-      return await this.circuitBreaker.execute(async () => {
+      const result = await this.circuitBreaker.execute(async () => {
         // 1. Perform retrieval
         const results = await this.retrievalEngine.retrieve(query, undefined, options);
         
@@ -378,6 +378,13 @@ export class SCDLSystemImpl extends EventEmitter implements SCDLSystem {
           processingTime: Date.now() - startTime
         };
       });
+      // Record success after circuit breaker succeeds
+      this.performanceMonitor.recordOperation(
+        OperationType.RETRIEVAL,
+        Date.now() - startTime,
+        true
+      );
+      return result;
     } catch (error) {
       this.performanceMonitor.recordOperation(
         OperationType.RETRIEVAL,
@@ -385,12 +392,6 @@ export class SCDLSystemImpl extends EventEmitter implements SCDLSystem {
         false
       );
       throw error;
-    } finally {
-      this.performanceMonitor.recordOperation(
-        OperationType.RETRIEVAL,
-        Date.now() - startTime,
-        true
-      );
     }
   }
 
