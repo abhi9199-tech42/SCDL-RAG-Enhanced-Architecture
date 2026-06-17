@@ -2,6 +2,11 @@ import { describe, it, expect } from 'vitest';
 import fc from 'fast-check';
 import { MultiLanguageValidator } from '../../isre/multilang/validator';
 import { SemanticRepresentation } from '../../types';
+import { randomBytes } from 'crypto';
+
+function secureRandom(): number {
+  return randomBytes(4).readUInt32BE(0) / 0xFFFFFFFF;
+}
 
 describe('Property 17: Multi-Language Consistency Validation', () => {
   const validator = new MultiLanguageValidator();
@@ -122,7 +127,7 @@ describe('Property 17: Multi-Language Consistency Validation', () => {
         }),
         async ({ baseVector, driftAmount }) => {
           // Create drifted vector
-          const driftedVector = baseVector.map(val => val + (Math.random() - 0.5) * driftAmount);
+          const driftedVector = baseVector.map(val => val + (secureRandom() - 0.5) * driftAmount);
 
           const baseRepr: SemanticRepresentation = {
             id: 'base',
@@ -175,16 +180,16 @@ describe('Property 17: Multi-Language Consistency Validation', () => {
           // Create representations with intentional inconsistency
           const repr1: SemanticRepresentation = {
             id: 'repr1',
-            semanticVector: new Array(128).fill(0).map(() => Math.random()),
+            semanticVector: new Array(128).fill(0).map(() => secureRandom()),
             intentNodes: [],
             sourceReferences: [],
             compressionRatio: 0.5,
             languageAgnosticHash: 'hash1'
           };
-
+          
           const repr2: SemanticRepresentation = {
             id: 'repr2',
-            semanticVector: new Array(128).fill(0).map(() => Math.random()),
+            semanticVector: new Array(128).fill(0).map(() => secureRandom()),
             intentNodes: [],
             sourceReferences: [],
             compressionRatio: 0.5,

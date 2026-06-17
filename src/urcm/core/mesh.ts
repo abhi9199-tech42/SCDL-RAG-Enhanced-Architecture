@@ -1,4 +1,9 @@
 import { MeshNodeState, MeshSignal } from '../types';
+import { randomBytes } from 'crypto';
+
+function secureRandom(): number {
+  return randomBytes(4).readUInt32BE(0) / 0xFFFFFFFF;
+}
 
 export class MeshNode {
   public nodeId: string;
@@ -11,7 +16,7 @@ export class MeshNode {
 
   constructor(nodeId: string) {
     this.nodeId = nodeId;
-    this.phase = Math.random() * 2 * Math.PI;
+    this.phase = secureRandom() * 2 * Math.PI;
   }
 
   connect(node: MeshNode): void {

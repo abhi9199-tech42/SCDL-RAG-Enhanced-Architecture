@@ -1,4 +1,5 @@
 import { SemanticRepresentation, SemanticUnit } from '../../types';
+import { generateId } from '../../utils/id';
 
 export interface LanguagePair {
   sourceLanguage: string;
@@ -361,7 +362,7 @@ export class MultiLanguageValidator {
   }
 
   private async applyCorrection(inconsistency: InconsistencyReport, correction: Correction): Promise<CorrectionResult> {
-    const correctionId = `corr-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const correctionId = generateId('corr');
     
     // Apply the correction (in a real system, this would update the storage)
     const success = correction.confidence > 0.5;
@@ -451,7 +452,7 @@ export class MultiLanguageValidator {
     severity: number
   ): InconsistencyReport {
     return {
-      id: `inc-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: generateId('inc'),
       languagePair,
       inconsistencyType: type,
       severity: Math.min(1.0, severity),

@@ -1,6 +1,11 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { MultiLanguageValidator, InconsistencyType, CorrectionType } from '../../isre/multilang/validator';
 import { SemanticRepresentation } from '../../types';
+import { randomBytes } from 'crypto';
+
+function secureRandom(): number {
+  return randomBytes(4).readUInt32BE(0) / 0xFFFFFFFF;
+}
 
 describe('MultiLanguageValidator Unit Tests', () => {
   let validator: MultiLanguageValidator;
@@ -259,7 +264,7 @@ describe('MultiLanguageValidator Unit Tests', () => {
       // Create a complex inconsistency that should require manual review
       const complexRepr1: SemanticRepresentation = {
         id: 'complex1',
-        semanticVector: new Array(128).fill(0).map(() => Math.random()),
+        semanticVector: new Array(128).fill(0).map(() => secureRandom()),
         intentNodes: [
           { id: 'complex1', label: 'complex-concept', confidence: 0.3, attributes: { type: 'CONTEXT', semanticPayload: [], conflictMarkers: [] } }
         ],
@@ -270,7 +275,7 @@ describe('MultiLanguageValidator Unit Tests', () => {
 
       const complexRepr2: SemanticRepresentation = {
         id: 'complex2',
-        semanticVector: new Array(128).fill(0).map(() => Math.random()),
+        semanticVector: new Array(128).fill(0).map(() => secureRandom()),
         intentNodes: [
           { id: 'complex2', label: 'different-concept', confidence: 0.2, attributes: { type: 'EMOTION', semanticPayload: [], conflictMarkers: [] } }
         ],
@@ -340,7 +345,7 @@ describe('MultiLanguageValidator Unit Tests', () => {
       for (let i = 0; i < 5; i++) {
         const repr1: SemanticRepresentation = {
           id: `perf1-${i}`,
-          semanticVector: new Array(4).fill(0).map(() => Math.random()),
+          semanticVector: new Array(4).fill(0).map(() => secureRandom()),
           intentNodes: [],
           sourceReferences: [{ sourceId: `src-${i}`, location: 'loc', metadata: { language: `lang1-${i}` } }],
           compressionRatio: 0.5,
@@ -349,7 +354,7 @@ describe('MultiLanguageValidator Unit Tests', () => {
 
         const repr2: SemanticRepresentation = {
           id: `perf2-${i}`,
-          semanticVector: new Array(4).fill(0).map(() => Math.random()),
+          semanticVector: new Array(4).fill(0).map(() => secureRandom()),
           intentNodes: [],
           sourceReferences: [{ sourceId: `src-${i}`, location: 'loc', metadata: { language: `lang2-${i}` } }],
           compressionRatio: 0.5,

@@ -1,6 +1,11 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { CompressionOptimizer, ContentType, Priority } from '../../isre/compression/optimizer';
 import { RawContent } from '../../types';
+import { randomBytes } from 'crypto';
+
+function secureRandom(): number {
+  return randomBytes(4).readUInt32BE(0) / 0xFFFFFFFF;
+}
 
 describe('CompressionOptimizer Unit Tests', () => {
   let optimizer: CompressionOptimizer;
@@ -162,7 +167,7 @@ describe('CompressionOptimizer Unit Tests', () => {
         metadata: rawContent.metadata,
         semantics: {
           compressionRatio: 0.8,
-          semanticVector: new Array(512).fill(0).map(() => Math.random()), // Needed for complexity analysis
+          semanticVector: new Array(512).fill(0).map(() => secureRandom()), // Needed for complexity analysis
           intentNodes: []
         }
       };
@@ -192,7 +197,7 @@ describe('CompressionOptimizer Unit Tests', () => {
         metadata: rawContent.metadata,
         semantics: {
           compressionRatio: 0.8,
-          semanticVector: new Array(512).fill(0).map(() => Math.random()),
+          semanticVector: new Array(512).fill(0).map(() => secureRandom()),
           intentNodes: []
         }
       };
@@ -220,7 +225,7 @@ describe('CompressionOptimizer Unit Tests', () => {
         metadata: { contentType: 'text' },
         semantics: {
           compressionRatio: 0.3, // Good ratio
-          semanticVector: new Array(512).fill(0).map(() => Math.random()),
+          semanticVector: new Array(512).fill(0).map(() => secureRandom()),
           intentNodes: []
         }
       };
@@ -231,7 +236,7 @@ describe('CompressionOptimizer Unit Tests', () => {
         metadata: { contentType: 'text' },
         semantics: {
           compressionRatio: 0.9, // Poor ratio
-          semanticVector: new Array(512).fill(0).map(() => Math.random()),
+          semanticVector: new Array(512).fill(0).map(() => secureRandom()),
           intentNodes: []
         }
       };

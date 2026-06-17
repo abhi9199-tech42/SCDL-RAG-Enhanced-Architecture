@@ -1,4 +1,10 @@
 import { RawContent, SemanticRepresentation } from '../../types';
+import { generateId } from '../../utils/id';
+import { randomBytes } from 'crypto';
+
+function secureRandom(): number {
+  return randomBytes(4).readUInt32BE(0) / 0xFFFFFFFF;
+}
 
 export interface OptimizedCompression {
   originalSize: number;
@@ -386,7 +392,7 @@ export class CompressionOptimizer {
     const optimizedVectorSize = Math.floor(baseVectorSize * (1 - vectorDimensionReduction));
     
     // Generate optimized semantic vector
-    const semanticVector = new Array(optimizedVectorSize).fill(0).map(() => Math.random());
+    const semanticVector = new Array(optimizedVectorSize).fill(0).map(() => secureRandom());
     
     // Calculate compression ratio based on strategy and content type
     const contentType = this.detectContentType(content);
@@ -464,10 +470,10 @@ export class CompressionOptimizer {
     
     for (const word of significantWords) {
       nodes.push({
-        id: `intent-${word}-${Math.random().toString(36).substr(2, 5)}`,
+        id: generateId(`intent-${word}`),
         label: word,
-        weight: 0.5 + Math.random() * 0.5,
-        confidence: 0.5 + Math.random() * 0.5, // Add confidence for clarity calculation
+        weight: 0.5 + secureRandom() * 0.5,
+        confidence: 0.5 + secureRandom() * 0.5, // Add confidence for clarity calculation
         intentType: word // Use the word as intent type for better overlap calculation
       });
     }

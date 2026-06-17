@@ -3,6 +3,7 @@ import { ISREProcessor } from '../types';
 import { VectorStore } from '../storage/types';
 import { IntentAwareRetrievalEngine } from '../retrieval/engine';
 import { SemanticUnit } from '../types';
+import { generateId } from '../utils/id';
 import { ApiResponse } from './types';
 import { validateApiKey } from './middleware/auth';
 
@@ -213,7 +214,7 @@ export const createRoutes = (
             }
 
             const rawContent = {
-              id: item.id || `doc-${Date.now()}-${Math.random()}`,
+              id: item.id || generateId('doc'),
               content: item.content,
               contentType: 'text',
               metadata: item.metadata

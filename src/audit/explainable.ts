@@ -1,5 +1,6 @@
 import { DecisionRecord, AuditTrail } from './types';
 import { SemanticUnit, IntentGraph, IntentNode, Contradiction, ResolutionStrategy } from '../types';
+import { generateId } from '../utils/id';
 
 export interface ExplanationContext {
   decisionChain: Decision[];
@@ -438,7 +439,7 @@ export class ExplainableAISystem {
     priority: ReviewPriority,
     category: ReviewCategory
   ): Promise<ExpertReviewItem> {
-    const reviewId = `review-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const reviewId = generateId('review');
     
     // Build comprehensive context for expert review
     const context = await this.generateExplanation(issue.operationId || reviewId, issue);

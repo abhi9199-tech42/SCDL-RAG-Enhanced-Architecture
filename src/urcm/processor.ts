@@ -106,7 +106,10 @@ export class URCMProcessorImpl implements URCMProcessor {
         id,
         semantics: { 
           id, 
-          semanticVector: new Array(128).fill(0).map(() => Math.random()),
+          semanticVector: new Array(128).fill(0).map((_, i) => {
+            const buf = require('crypto').randomBytes(4);
+            return (buf.readUInt32BE(0) / 0xFFFFFFFF) * 2 - 1;
+          }),
           intentNodes: [],
           intentGraph: { nodes: [], edges: [], rootIntent: '', confidenceScore: 1.0 },
           sourceReferences: [],

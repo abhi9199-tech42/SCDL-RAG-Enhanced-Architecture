@@ -2,6 +2,11 @@ import { describe, it, expect } from 'vitest';
 import fc from 'fast-check';
 import { CompressionOptimizer, ContentType, Priority } from '../../isre/compression/optimizer';
 import { RawContent } from '../../types';
+import { randomBytes } from 'crypto';
+
+function secureRandom(): number {
+  return randomBytes(4).readUInt32BE(0) / 0xFFFFFFFF;
+}
 
 describe('Property 18: Compression Ratio Optimization Effectiveness', () => {
   const optimizer = new CompressionOptimizer();
@@ -113,7 +118,7 @@ describe('Property 18: Compression Ratio Optimization Effectiveness', () => {
             metadata: rawContent.metadata,
             semantics: {
               compressionRatio: currentRatio,
-              semanticVector: new Array(512).fill(0).map(() => Math.random())
+              semanticVector: new Array(512).fill(0).map(() => secureRandom())
             }
           };
           
@@ -324,7 +329,7 @@ describe('Property 18: Compression Ratio Optimization Effectiveness', () => {
           // Process multiple content items to build history
           for (const item of contentItems) {
             const rawContent: RawContent = {
-              id: `history-${Date.now()}-${Math.random()}`,
+              id: `history-${Date.now()}-${secureRandom()}`,
               content: item.content,
               contentType: 'text',
               metadata: { 
@@ -344,7 +349,7 @@ describe('Property 18: Compression Ratio Optimization Effectiveness', () => {
               compressedSize: optimization.compressedSize,
               compressionRatio: optimization.compressionRatio,
               qualityScore: optimization.qualityScore,
-              processingTime: Math.random() * 1000,
+              processingTime: secureRandom() * 1000,
               timestamp: new Date()
             };
             

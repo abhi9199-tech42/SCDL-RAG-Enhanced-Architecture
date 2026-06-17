@@ -1,4 +1,6 @@
 import { EventEmitter } from 'events';
+import * as os from 'os';
+import { randomBytes } from 'crypto';
 
 export interface PerformanceMetrics {
   timestamp: Date;
@@ -288,16 +290,17 @@ export class PerformanceMonitor extends EventEmitter {
   }
 
   private getResourceUtilization(): ResourceUtilization {
-    // In a real implementation, this would use system monitoring libraries
-    // For now, provide estimated values based on memory usage
     const memUsage = process.memoryUsage();
     const memoryUtilization = memUsage.heapUsed / memUsage.heapTotal;
+    const cpus = os.cpus();
+    const loadAvg = os.loadavg();
+    const cpuUtilization = Math.min(100, (loadAvg[0] / cpus.length) * 100);
     
     return {
-      cpu: Math.min(100, memoryUtilization * 100 + Math.random() * 20), // Estimated
-      memory: (memoryUtilization * 100),
-      disk: Math.random() * 50, // Placeholder
-      network: Math.random() * 30 // Placeholder
+      cpu: Math.min(100, cpuUtilization),
+      memory: memoryUtilization * 100,
+      disk: 0,
+      network: 0
     };
   }
 
@@ -314,7 +317,7 @@ export class PerformanceMonitor extends EventEmitter {
   private getCurrentConcurrentRequests(): number {
     // This would be tracked by the actual request handling system
     // For now, estimate based on recent activity
-    return Math.floor(Math.random() * 20);
+    return Math.min(20, Math.floor(this.metrics.length / 10));
   }
 
   private getQueueDepth(): number {
@@ -983,7 +986,7 @@ export class Cache {
 
   private findRandomKey(): string {
     const keys = Array.from(this.data.keys());
-    const randomIndex = Math.floor(Math.random() * keys.length);
+    const randomIndex = randomBytes(4).readUInt32BE(0) % keys.length;
     return keys[randomIndex];
   }
 

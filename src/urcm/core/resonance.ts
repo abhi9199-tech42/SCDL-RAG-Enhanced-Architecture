@@ -1,5 +1,10 @@
 import { SemanticRepresentation } from '../../types';
 import { ResonanceField } from '../types';
+import { randomBytes } from 'crypto';
+
+function secureRandom(): number {
+  return randomBytes(4).readUInt32BE(0) / 0xFFFFFFFF;
+}
 
 export class ResonanceEncoder {
   private inputDim: number;
@@ -19,7 +24,7 @@ export class ResonanceEncoder {
     for (let i = 0; i < rows; i++) {
       const row: number[] = [];
       for (let j = 0; j < cols; j++) {
-        row.push((Math.random() * 2 - 1) * scale);
+        row.push((secureRandom() * 2 - 1) * scale);
       }
       matrix.push(row);
     }
@@ -45,8 +50,8 @@ export class ResonanceEncoder {
     
     // Mocking the projection for now using the semantic vectors directly if available
     // or generating synthetic ones if not.
-    const v1 = source.semanticVector || new Array(this.resonanceDim).fill(0).map(() => Math.random());
-    const v2 = target.semanticVector || new Array(this.resonanceDim).fill(0).map(() => Math.random());
+    const v1 = source.semanticVector || new Array(this.resonanceDim).fill(0).map(() => secureRandom());
+    const v2 = target.semanticVector || new Array(this.resonanceDim).fill(0).map(() => secureRandom());
 
     // Align dimensions if needed (simple truncation or padding)
     const len = Math.min(v1.length, v2.length);

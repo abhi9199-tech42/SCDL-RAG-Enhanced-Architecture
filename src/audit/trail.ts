@@ -1,12 +1,13 @@
 import { AuditTrail, DecisionRecord } from './types';
 import { logger } from '../utils/logger';
+import { generateId } from '../utils/id';
 
 export class InMemoryAuditTrail implements AuditTrail {
   private records: Map<string, DecisionRecord> = new Map();
   private entityIndex: Map<string, string[]> = new Map(); // entityId -> recordId[]
 
   async logDecision(data: Omit<DecisionRecord, 'id' | 'timestamp'>): Promise<string> {
-    const id = `dec-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const id = generateId('dec');
     const record: DecisionRecord = {
       ...data,
       id,

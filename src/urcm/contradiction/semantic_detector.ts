@@ -1,5 +1,6 @@
 import { SemanticUnit } from '../../types';
 import { Contradiction } from '../types';
+import { generateId } from '../../utils/id';
 
 export interface SemanticContradiction extends Contradiction {
   semanticDistance: number;
@@ -457,7 +458,7 @@ export class SemanticContradictionDetector {
     );
     
     return {
-      id: `semantic-contradiction-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: generateId('semantic-contradiction'),
       sourceIds: [unit1.id, unit2.id],
       description: `Semantic contradiction detected between units with ${contradictionScore.toFixed(2)} contradiction score`,
       severity: contradictionScore,
@@ -592,7 +593,7 @@ export class SemanticContradictionDetector {
     const clusterIds = cluster.filter(u => u.id !== outlierUnit.id).map(u => u.id);
     
     return {
-      id: `cluster-contradiction-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: generateId('cluster-contradiction'),
       sourceIds: [outlierUnit.id, ...clusterIds.slice(0, 3)], // Limit to avoid too many IDs
       description: `Semantic outlier detected in cluster with distance ${distanceFromCentroid.toFixed(2)} from centroid`,
       severity: Math.min(1.0, distanceFromCentroid * 1.5),

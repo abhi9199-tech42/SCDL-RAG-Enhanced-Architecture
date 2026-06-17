@@ -1,3 +1,9 @@
+import { randomBytes } from 'crypto';
+
+function secureRandom(): number {
+  return randomBytes(4).readUInt32BE(0) / 0xFFFFFFFF;
+}
+
 export class AttractorNetwork {
   private size: number;
   private couplingStrength: number;
@@ -7,8 +13,8 @@ export class AttractorNetwork {
   constructor(size: number, couplingStrength: number = 2.0) {
     this.size = size;
     this.couplingStrength = couplingStrength;
-    this.phases = new Array(size).fill(0).map(() => Math.random() * 2 * Math.PI);
-    this.frequencies = new Array(size).fill(0).map(() => (Math.random() - 0.5) * 0.2);
+    this.phases = new Array(size).fill(0).map(() => secureRandom() * 2 * Math.PI);
+    this.frequencies = new Array(size).fill(0).map(() => (secureRandom() - 0.5) * 0.2);
   }
 
   setPhases(phases: number[]) {
