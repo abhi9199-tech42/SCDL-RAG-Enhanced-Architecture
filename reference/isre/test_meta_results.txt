@@ -1,0 +1,17 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.13.3, pytest-8.4.1, pluggy-1.6.0
+rootdir: C:\Users\kriti\OneDrive\Intentional Semantic Reasoning Engine (ISRE)
+configfile: pyproject.toml
+plugins: anyio-3.7.1, hypothesis-6.148.8, asyncio-1.1.0, cov-6.3.0
+asyncio: mode=Mode.STRICT, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 4 items
+
+tests\test_meta.py .
+[Meta 32.3] Loss of Conflict Detection confirmed: Pipeline reduced to default/verification paths.
+.
+[Meta 32.4] Quality Degradation confirmed: Selected path with score 0.1
+.
+[Meta 32.5] Stress Test confirmed: System survived extreme conflict density.
+.
+
+============================== 4 passed in 0.54s ==============================

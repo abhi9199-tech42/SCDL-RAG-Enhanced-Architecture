@@ -1,0 +1,25 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.13.3, pytest-8.4.1, pluggy-1.6.0
+rootdir: C:\Users\kriti\OneDrive\Intentional Semantic Reasoning Engine (ISRE)
+configfile: pyproject.toml
+plugins: anyio-3.7.1, hypothesis-6.148.8, asyncio-1.1.0, cov-6.3.0
+asyncio: mode=Mode.STRICT, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 3 items
+
+tests\test_scalability.py 
+[Scalability] Graph Size Scaling Results:
+  Nodes: 10, Latency: 0.0005s
+  Nodes: 100, Latency: 0.0073s
+  Nodes: 500, Latency: 0.0143s
+.
+[Scalability] Reasoning Depth Scaling Results:
+  Depth: 10, Latency: 0.0003s
+  Depth: 100, Latency: 0.0022s
+  Depth: 500, Latency: 0.1793s
+.
+[Scalability] Knowledge Source Scaling (Populating 1M facts)...
+  Population time: 1.10s
+  Lookup Latency for 1M facts: 0.002942s
+.
+
+============================== 3 passed in 2.75s ==============================

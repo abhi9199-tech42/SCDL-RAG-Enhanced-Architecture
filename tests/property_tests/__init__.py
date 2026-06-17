@@ -1,0 +1,1 @@
+# Property-based tests for SCDL-RAG Enhanced Architecture

@@ -1,0 +1,50 @@
+{
+  "name": "scdl-rag-enhanced-architecture",
+  "version": "1.0.0",
+  "description": "SCDL-RAG Enhanced Architecture - Contradiction-aware retrieval system",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest --run",
+    "test:watch": "vitest",
+    "test:pbt": "vitest run tests/property_tests",
+    "lint": "eslint src/**/*.ts",
+    "clean": "rimraf dist"
+  },
+  "keywords": [
+    "rag",
+    "semantic",
+    "reasoning",
+    "ai",
+    "nlp"
+  ],
+  "author": "SCDL-RAG Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^20.19.30",
+    "@types/supertest": "^6.0.3",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "fast-check": "^4.5.3",
+    "rimraf": "^5.0.0",
+    "supertest": "^7.2.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3",
+    "vitest": "^1.0.0"
+  },
+  "dependencies": {
+    "body-parser": "^2.2.2",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "winston": "^3.11.0",
+    "zod": "^4.3.6"
+  },
+  "directories": {
+    "test": "tests"
+  },
+  "type": "commonjs"
+}

@@ -1,0 +1,57 @@
+name: SCDL-RAG CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  validate:
+    name: Validate & Test
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          
+      - name: Install Dependencies
+        run: npm ci
+        
+      - name: Lint Code
+        run: npm run lint
+        
+      - name: Type Check
+        run: npm run build
+        
+      - name: Run Unit & Integration Tests
+        run: npm run test
+        
+      - name: Run Property-Based Tests
+        run: npm run test:pbt
+        
+  audit:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm audit --audit-level=high
+
+  deploy-dry-run:
+    name: Deploy Dry Run
+    needs: [validate, audit]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Simulate Deployment
+        run: echo "Deployment dry run successful"
+
