@@ -1,6 +1,7 @@
 import { SCDLSystem } from './types';
 import { SystemConfig } from '../config/types';
 import { configManager } from '../config/manager';
+import { ISREProcessor, URCMProcessor } from '../types';
 import { ISREProcessorImpl } from '../isre/processor';
 import { URCMProcessorImpl } from '../urcm/processor';
 import { FileVectorStore } from '../storage/file_store';
@@ -18,16 +19,17 @@ import { logger } from '../utils/logger';
 import { Express } from 'express';
 import * as http from 'http';
 import { EventEmitter } from 'events';
+import { VectorStore } from '../storage/types';
 
 export class SCDLSystemImpl extends EventEmitter implements SCDLSystem {
   public config: SystemConfig;
-  public isreProcessor!: ISREProcessorImpl;
-  public urcmProcessor!: URCMProcessorImpl;
-  public vectorStore!: FileVectorStore;
-  public deduplicationEngine!: SemanticDeduplicationEngine;
+  public isreProcessor!: ISREProcessor;
+  public urcmProcessor!: URCMProcessor;
+  public vectorStore!: VectorStore;
+  public deduplicationEngine!: import('../storage/types').DeduplicationEngine;
   public retrievalEngine!: IntentAwareRetrievalEngine;
-  public contextAssembler!: ContextAssemblerImpl;
-  public auditTrail!: InMemoryAuditTrail;
+  public contextAssembler!: import('../context/types').ContextAssembler;
+  public auditTrail!: import('../audit/types').AuditTrail;
   public explainableAI!: ExplainableAISystem;
   public multiLanguageValidator!: MultiLanguageValidator;
   public compressionOptimizer!: CompressionOptimizer;
