@@ -6,6 +6,15 @@ import { SemanticUnit } from '../types';
 import { generateId } from '../utils/id';
 import { ApiResponse } from './types';
 import { validateApiKey } from './middleware/auth';
+import {
+  validateBody,
+  IngestRequestSchema,
+  BatchIngestRequestSchema,
+  RetrieveRequestSchema,
+  DetectContradictionsRequestSchema,
+  ValidateMultilangRequestSchema,
+  OptimizeCompressionRequestSchema
+} from './validation';
 
 export const createRoutes = (
   processor: ISREProcessor,
@@ -84,18 +93,10 @@ export const createRoutes = (
   });
 
   // Enhanced ingest endpoint with optimization and validation
-  router.post('/ingest', async (req, res) => {
+  router.post('/ingest', validateBody(IngestRequestSchema), async (req, res) => {
     const start = Date.now();
     try {
       const { id, content, metadata, language } = req.body;
-      
-      if (!content) {
-         const response: ApiResponse<null> = { 
-           success: false, 
-           error: { code: 'VALIDATION_ERROR', message: 'Content is required' } 
-         };
-         return res.status(400).json(response);
-      }
 
       const rawContent = {
         id: id || `doc-${Date.now()}`,
@@ -190,24 +191,17 @@ export const createRoutes = (
   });
 
   // Enhanced batch ingest with parallel processing
-  router.post('/batch/ingest', async (req, res) => {
+  router.post('/batch/ingest', validateBody(BatchIngestRequestSchema), async (req, res) => {
     const start = Date.now();
     try {
       const { items } = req.body;
-      
-      if (!Array.isArray(items)) {
-         return res.status(400).json({ 
-           success: false, 
-           error: { code: 'VALIDATION_ERROR', message: 'Items array is required' } 
-         });
-      }
 
       const results = [];
       const batchSize = 10; // Process in batches to avoid overwhelming the system
       
       for (let i = 0; i < items.length; i += batchSize) {
         const batch = items.slice(i, i + batchSize);
-        const batchPromises = batch.map(async (item) => {
+        const batchPromises = batch.map(async (item: { id?: string; content: string; metadata?: Record<string, any> }) => {
           try {
             if (!item.content) {
               return { success: false, error: 'Content required', id: item.id };
@@ -265,18 +259,10 @@ export const createRoutes = (
   });
 
   // Enhanced retrieve endpoint with explanations
-  router.post('/retrieve', async (req, res) => {
+  router.post('/retrieve', validateBody(RetrieveRequestSchema), async (req, res) => {
     const start = Date.now();
     try {
       const { query, limit, includeExplanation } = req.body;
-      
-      if (!query) {
-         const response: ApiResponse<null> = { 
-           success: false, 
-           error: { code: 'VALIDATION_ERROR', message: 'Query is required' } 
-         };
-         return res.status(400).json(response);
-      }
 
       const results = await retrievalEngine.retrieve(query, undefined, { limit: limit || 5 });
 
@@ -319,7 +305,7 @@ export const createRoutes = (
   });
 
   // Contradiction detection endpoint
-  router.post('/detect-contradictions', async (req, res) => {
+  router.post('/detect-contradictions', validateBody(DetectContradictionsRequestSchema), async (req, res) => {
     if (!enhancedComponents?.contradictionDetector) {
       return res.status(503).json({
         success: false,
@@ -329,13 +315,6 @@ export const createRoutes = (
 
     try {
       const { semanticUnitIds } = req.body;
-      
-      if (!Array.isArray(semanticUnitIds)) {
-        return res.status(400).json({
-          success: false,
-          error: { code: 'VALIDATION_ERROR', message: 'semanticUnitIds array is required' }
-        });
-      }
 
       // Retrieve semantic units
       const units = [];
@@ -364,7 +343,7 @@ export const createRoutes = (
   });
 
   // Multi-language validation endpoint
-  router.post('/validate-multilang', async (req, res) => {
+  router.post('/validate-multilang', validateBody(ValidateMultilangRequestSchema), async (req, res) => {
     if (!enhancedComponents?.multiLanguageValidator) {
       return res.status(503).json({
         success: false,
@@ -374,13 +353,6 @@ export const createRoutes = (
 
     try {
       const { representations } = req.body;
-      
-      if (!representations || typeof representations !== 'object') {
-        return res.status(400).json({
-          success: false,
-          error: { code: 'VALIDATION_ERROR', message: 'representations object is required' }
-        });
-      }
 
       const representationMap = new Map(Object.entries(representations));
       const validation = await enhancedComponents.multiLanguageValidator.validateConsistency(representationMap);
@@ -399,7 +371,7 @@ export const createRoutes = (
   });
 
   // Compression optimization endpoint
-  router.post('/optimize-compression', async (req, res) => {
+  router.post('/optimize-compression', validateBody(OptimizeCompressionRequestSchema), async (req, res) => {
     if (!enhancedComponents?.compressionOptimizer) {
       return res.status(503).json({
         success: false,
@@ -409,13 +381,6 @@ export const createRoutes = (
 
     try {
       const { content } = req.body;
-      
-      if (!content) {
-        return res.status(400).json({
-          success: false,
-          error: { code: 'VALIDATION_ERROR', message: 'content is required' }
-        });
-      }
 
       const optimization = await enhancedComponents.compressionOptimizer.optimizeCompressionRatio(content);
 
