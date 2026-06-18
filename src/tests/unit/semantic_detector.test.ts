@@ -12,7 +12,7 @@ describe('SemanticContradictionDetector', () => {
       semantics: {
         id,
         semanticVector: vector,
-        intentNodes: [{ id: `${id}_intent`, label: intent, attributes: {} }],
+        intentNodes: [{ id: `${id}_intent`, label: intent, confidence: 1.0, attributes: {} }],
         intentGraph: { nodes: [], edges: [], rootIntent: intent, confidenceScore: 1.0 },
         sourceReferences: [],
         compressionRatio: 1.0,

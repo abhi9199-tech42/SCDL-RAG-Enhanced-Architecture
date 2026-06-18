@@ -109,9 +109,10 @@ describe('URCMProcessorImpl', () => {
     it('should produce coherent context from semantic units', async () => {
       const units: SemanticUnit[] = [{
         id: 'u1',
+        content: 'test content',
         semantics: makeSemantic('u1', [0.5, 0.5, 0.5]),
-        metadata: { source: 'test', timestamp: new Date().toISOString(), domain: 'general' },
-        relationships: []
+        sourceReferences: [],
+        metadata: { source: 'test', timestamp: new Date().toISOString(), domain: 'general' }
       }];
       const result = await processor.performOscillatoryReasoning(units);
       expect(result.coherenceScore).toBeGreaterThanOrEqual(0);
@@ -133,9 +134,10 @@ describe('URCMProcessorImpl', () => {
           {
             id: 'n1',
             label: 'A',
+            confidence: 0.9,
             attributes: { conflictMarkers: [{ partnerId: 'n2', description: 'Conflict' }] }
           },
-          { id: 'n2', label: 'B', attributes: {} }
+          { id: 'n2', label: 'B', confidence: 0.9, attributes: {} }
         ],
         edges: [],
         rootIntent: 'test',
@@ -150,6 +152,7 @@ describe('URCMProcessorImpl', () => {
         nodes: Array.from({ length: 5 }, (_, i) => ({
           id: `n${i}`,
           label: `Node ${i}`,
+          confidence: 0.9,
           attributes: {}
         })),
         edges: [],

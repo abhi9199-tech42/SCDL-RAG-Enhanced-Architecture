@@ -1,5 +1,9 @@
 import { SCDLSystemImpl } from './system/core';
+import { loadConfigFromEnv } from './config/loader';
 import { logger } from './utils/logger';
+
+// Load configuration from environment variables
+loadConfigFromEnv();
 
 // Export all types and core classes
 export * from './types';
