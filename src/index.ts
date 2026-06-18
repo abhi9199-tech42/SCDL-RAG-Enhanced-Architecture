@@ -23,10 +23,38 @@ export const system = new SCDLSystemImpl();
 
 // Handle process signals if running as main
 if (require.main === module) {
+  let isShuttingDown = false;
+  const SHUTDOWN_TIMEOUT_MS = 10000;
+
+  const gracefulShutdown = async (signal: string) => {
+    if (isShuttingDown) return;
+    isShuttingDown = true;
+
+    logger.info(`${signal} received. Starting graceful shutdown...`);
+
+    const forceExitTimer = setTimeout(() => {
+      logger.error('Shutdown timed out. Forcing exit.');
+      process.exit(1);
+    }, SHUTDOWN_TIMEOUT_MS);
+    forceExitTimer.unref();
+
+    try {
+      await system.shutdown();
+      logger.info('Graceful shutdown complete.');
+      clearTimeout(forceExitTimer);
+      process.exit(0);
+    } catch (error) {
+      logger.error('Error during shutdown:', error);
+      clearTimeout(forceExitTimer);
+      process.exit(1);
+    }
+  };
+
   const startSystem = async () => {
     try {
       await system.initialize();
       await system.start();
+      logger.info('System ready. Press Ctrl+C to stop.');
     } catch (error) {
       logger.error('Failed to start system:', error);
       process.exit(1);
@@ -35,15 +63,15 @@ if (require.main === module) {
 
   startSystem();
 
-  process.on('SIGTERM', async () => {
-    logger.info('SIGTERM received. Shutting down...');
-    await system.stop();
-    process.exit(0);
+  process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+  process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+
+  process.on('uncaughtException', (error) => {
+    logger.error('Uncaught exception:', error);
+    gracefulShutdown('uncaughtException');
   });
 
-  process.on('SIGINT', async () => {
-    logger.info('SIGINT received. Shutting down...');
-    await system.stop();
-    process.exit(0);
+  process.on('unhandledRejection', (reason) => {
+    logger.error('Unhandled rejection:', reason);
   });
 }
