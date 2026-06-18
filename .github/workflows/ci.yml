@@ -67,14 +67,18 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_PAT || secrets.GITHUB_TOKEN }}
 
+      - name: Set lowercase repo name
+        id: repo
+        run: echo "REPO_LOWER=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+
       - name: Push to GHCR
         run: |
           set +e
-          docker tag scdl-rag:${{ github.sha }} ghcr.io/$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]'):${{ github.sha }}
-          docker tag scdl-rag:${{ github.sha }} ghcr.io/$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]'):latest
-          docker push ghcr.io/$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]'):${{ github.sha }}
+          docker tag scdl-rag:${{ github.sha }} ghcr.io/${{ steps.repo.outputs.REPO_LOWER }}:${{ github.sha }}
+          docker tag scdl-rag:${{ github.sha }} ghcr.io/${{ steps.repo.outputs.REPO_LOWER }}:latest
+          docker push ghcr.io/${{ steps.repo.outputs.REPO_LOWER }}:${{ github.sha }}
           PUSH_RESULT=$?
-          docker push ghcr.io/$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]'):latest
+          docker push ghcr.io/${{ steps.repo.outputs.REPO_LOWER }}:latest
           if [ $PUSH_RESULT -ne 0 ]; then
             echo "Warning: GHCR push failed (likely org permissions). Image built and tested successfully."
             exit 0
