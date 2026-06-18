@@ -313,7 +313,7 @@ export const DEFAULT_CONFIG: SystemConfig = {
   },
   api: {
     port: 3000,
-    host: 'localhost',
+    host: '0.0.0.0',
     corsOrigins: ['*'],
     rateLimit: {
       windowMs: 60000,

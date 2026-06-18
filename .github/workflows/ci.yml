@@ -50,9 +50,9 @@ jobs:
           docker run -d --name test-container \
             -p 3000:3000 \
             -e SCDL_API_KEY=test-key \
-            -e NODE_ENV=test \
+            -e NODE_ENV=production \
             scdl-rag:${{ github.sha }}
-          sleep 5
+          sleep 15
           curl -f http://localhost:3000/api/health || exit 1
           docker stop test-container
 
