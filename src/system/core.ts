@@ -4,7 +4,6 @@ import { configManager } from '../config/manager';
 import { ISREProcessorImpl } from '../isre/processor';
 import { URCMProcessorImpl } from '../urcm/processor';
 import { FileVectorStore } from '../storage/file_store';
-import { InMemoryVectorStore } from '../storage/memory_store';
 import { SemanticDeduplicationEngine } from '../storage/deduplication';
 import { IntentAwareRetrievalEngine } from '../retrieval/engine';
 import { ContextAssemblerImpl } from '../context/assembler';

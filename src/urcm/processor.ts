@@ -17,6 +17,7 @@ import { ResonanceEncoder } from './core/resonance';
 import { AttractorNetwork } from './core/attractor';
 import { HybridContradictionDetector } from './contradiction/detector';
 import { StandardResolutionEngine } from './contradiction/resolution';
+import { randomBytes } from 'crypto';
 
 export class URCMProcessorImpl implements URCMProcessor {
   private resonanceEncoder: ResonanceEncoder;
@@ -102,19 +103,19 @@ export class URCMProcessorImpl implements URCMProcessor {
       if (!contradiction) continue;
       
       // Create frequency mapping for contradicting semantic units
-      const semanticUnits = contradiction.sourceIds.map(id => ({
-        id,
-        semantics: { 
-          id, 
-          semanticVector: new Array(128).fill(0).map((_, i) => {
-            const buf = require('crypto').randomBytes(4);
-            return (buf.readUInt32BE(0) / 0xFFFFFFFF) * 2 - 1;
-          }),
+        const semanticUnits = contradiction.sourceIds.map((_id, _i) => ({
+          id: _id,
+          semantics: { 
+          id: _id, 
+            semanticVector: new Array(128).fill(0).map(() => {
+              const buf = randomBytes(4);
+              return (buf.readUInt32BE(0) / 0xFFFFFFFF) * 2 - 1;
+            }),
           intentNodes: [],
           intentGraph: { nodes: [], edges: [], rootIntent: '', confidenceScore: 1.0 },
           sourceReferences: [],
           compressionRatio: 1.0,
-          languageAgnosticHash: id
+          languageAgnosticHash: _id
         }
       }));
       

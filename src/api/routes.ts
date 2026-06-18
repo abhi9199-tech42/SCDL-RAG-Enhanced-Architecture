@@ -17,15 +17,10 @@ import {
 } from './validation';
 import {
   registry,
-  httpRequestDuration,
-  httpRequestTotal,
-  semanticCompressions,
-  semanticCompressionDuration,
   contradictionsDetected,
   retrievals,
   retrievalDuration,
-  vectorStoreSize,
-  circuitBreakerState
+  vectorStoreSize
 } from './metrics';
 
 export const createRoutes = (

@@ -88,8 +88,8 @@ describe('CircuitBreaker', () => {
       halfOpenMaxCalls: 1,
       successThreshold: 1
     });
-    try { await cb.execute(async () => { throw new Error('fail'); }); } catch {}
-    try { await cb.execute(async () => { throw new Error('fail'); }); } catch {}
+    try { await cb.execute(async () => { throw new Error('fail'); }); } catch { /* expected */ }
+    try { await cb.execute(async () => { throw new Error('fail'); }); } catch { /* expected */ }
     expect(cb.getState()).toBe(CircuitBreakerState.OPEN);
   });
 
@@ -101,7 +101,7 @@ describe('CircuitBreaker', () => {
       halfOpenMaxCalls: 1,
       successThreshold: 1
     });
-    try { await cb.execute(async () => { throw new Error('fail'); }); } catch {}
+    try { await cb.execute(async () => { throw new Error('fail'); }); } catch { /* expected */ }
     await expect(cb.execute(async () => 'should not run')).rejects.toThrow('Circuit breaker is OPEN');
   });
 

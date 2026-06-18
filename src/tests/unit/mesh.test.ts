@@ -118,7 +118,6 @@ describe('MeshNode', () => {
       const n1 = new MeshNode('n1');
       const n2 = new MeshNode('n2');
       n1.connect(n2);
-      const initialPhase = n1.getState().phase;
       n2.broadcastSignal('sync');
       // Phase should change due to Kuramoto dynamics
       expect(n1.getState().phase).toBeDefined();
