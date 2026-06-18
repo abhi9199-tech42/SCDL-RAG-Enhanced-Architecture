@@ -6,6 +6,7 @@ import { SemanticUnit } from '../types';
 import { generateId } from '../utils/id';
 import { ApiResponse } from './types';
 import { validateApiKey } from './middleware/auth';
+import { PerformanceMonitor, OperationType } from '../system/performance';
 import {
   validateBody,
   IngestRequestSchema,
@@ -27,7 +28,15 @@ export const createRoutes = (
   processor: ISREProcessor,
   vectorStore: VectorStore,
   retrievalEngine: IntentAwareRetrievalEngine,
-  enhancedComponents?: any
+  enhancedComponents?: {
+    performanceMonitor?: PerformanceMonitor;
+    circuitBreaker?: any;
+    cacheManager?: any;
+    explainableAI?: any;
+    multiLanguageValidator?: any;
+    compressionOptimizer?: any;
+    contradictionDetector?: any;
+  }
 ) => {
   const router = Router();
 
@@ -38,7 +47,7 @@ export const createRoutes = (
       if (enhancedComponents?.performanceMonitor) {
         const duration = Date.now() - req.startTime;
         const success = res.statusCode < 400;
-        enhancedComponents.performanceMonitor.recordOperation('API_REQUEST', duration, success);
+        enhancedComponents.performanceMonitor.recordOperation(OperationType.API_REQUEST, duration, success);
       }
     });
     next();
@@ -48,7 +57,21 @@ export const createRoutes = (
 
   // Enhanced health endpoint with comprehensive system status
   router.get('/health', (req, res) => {
-    const health: any = {
+    const health: {
+      status: string;
+      timestamp: string;
+      version: string;
+      components: {
+        isre: string;
+        urcm: string;
+        vectorStore: string;
+        retrieval: string;
+        performanceMonitor?: string;
+        circuitBreaker?: string;
+        cacheManager?: string;
+        explainableAI?: string;
+      };
+    } = {
       status: 'ok',
       timestamp: new Date().toISOString(),
       version: '1.0.0',
@@ -238,7 +261,7 @@ export const createRoutes = (
             };
 
             const semantics = await processor.compressSemantics(rawContent);
-            const unit: SemanticUnit = {
+const unit: SemanticUnit = {
               id: semantics.id,
               content: item.content,
               semantics,
@@ -278,7 +301,7 @@ export const createRoutes = (
          success: false, 
          error: { code: 'INTERNAL_ERROR', message: err.message } 
        });
-    }
+     }
   });
 
   // Enhanced retrieve endpoint with explanations
