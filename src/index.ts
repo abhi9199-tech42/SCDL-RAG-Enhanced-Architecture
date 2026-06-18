@@ -52,7 +52,9 @@ if (require.main === module) {
 
   const startSystem = async () => {
     try {
+      logger.info('Initializing SCDL System...');
       await system.initialize();
+      logger.info('SCDL System initialized, starting HTTP server...');
       await system.start();
       logger.info('System ready. Press Ctrl+C to stop.');
     } catch (error) {
