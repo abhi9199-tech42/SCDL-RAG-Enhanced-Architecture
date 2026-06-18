@@ -1,6 +1,7 @@
 import { SemanticRepresentation } from '../../types';
 import { ResonanceField } from '../types';
 import { randomBytes } from 'crypto';
+import { cosineSimilarity } from '../../utils/vector';
 
 function secureRandom(): number {
   return randomBytes(4).readUInt32BE(0) / 0xFFFFFFFF;
@@ -36,14 +37,6 @@ export class ResonanceEncoder {
     return v1.map((val, i) => val + (v2[i] || 0));
   }
 
-  // Simple cosine similarity
-  private cosineSimilarity(v1: number[], v2: number[]): number {
-    const dot = v1.reduce((sum, val, i) => sum + val * v2[i], 0);
-    const mag1 = Math.sqrt(v1.reduce((sum, val) => sum + val * val, 0));
-    const mag2 = Math.sqrt(v2.reduce((sum, val) => sum + val * val, 0));
-    return mag1 && mag2 ? dot / (mag1 * mag2) : 0;
-  }
-
   async calculateResonance(source: SemanticRepresentation, target: SemanticRepresentation): Promise<ResonanceField> {
     // Simulate resonance calculation based on semantic vectors
     // In a real system, we would project these through the reservoir (W_res)
@@ -58,7 +51,7 @@ export class ResonanceEncoder {
     const v1t = v1.slice(0, len);
     const v2t = v2.slice(0, len);
 
-    const coherence = this.cosineSimilarity(v1t, v2t);
+    const coherence = cosineSimilarity(v1t, v2t);
     
     // Calculate phase alignment (mocked based on coherence)
     // Higher coherence -> closer phase alignment (near 0)

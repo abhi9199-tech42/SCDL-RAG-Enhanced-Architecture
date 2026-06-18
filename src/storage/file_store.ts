@@ -3,6 +3,7 @@ import { VectorStore } from './types';
 import * as fs from 'fs';
 import * as path from 'path';
 import { logger } from '../utils/logger';
+import { cosineSimilarity } from '../utils/vector';
 
 export class FileVectorStore implements VectorStore {
   private units: Map<string, SemanticUnit> = new Map();
@@ -86,7 +87,7 @@ export class FileVectorStore implements VectorStore {
         continue;
       }
       
-      const score = this.cosineSimilarity(queryVector, unit.semantics.semanticVector);
+      const score = cosineSimilarity(queryVector, unit.semantics.semanticVector);
       results.push({ unit, score });
     }
 
@@ -127,23 +128,5 @@ export class FileVectorStore implements VectorStore {
       }
   }
 
-  private cosineSimilarity(v1: number[], v2: number[]): number {
-    const len = Math.min(v1.length, v2.length);
-    if (len === 0) return 0;
-    
-    let dot = 0;
-    let mag1 = 0;
-    let mag2 = 0;
 
-    for (let i = 0; i < len; i++) {
-      dot += v1[i] * v2[i];
-      mag1 += v1[i] * v1[i];
-      mag2 += v2[i] * v2[i];
-    }
-
-    mag1 = Math.sqrt(mag1);
-    mag2 = Math.sqrt(mag2);
-
-    return (mag1 && mag2) ? dot / (mag1 * mag2) : 0;
-  }
 }
