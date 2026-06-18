@@ -15,6 +15,18 @@ import {
   ValidateMultilangRequestSchema,
   OptimizeCompressionRequestSchema
 } from './validation';
+import {
+  registry,
+  httpRequestDuration,
+  httpRequestTotal,
+  semanticCompressions,
+  semanticCompressionDuration,
+  contradictionsDetected,
+  retrievals,
+  retrievalDuration,
+  vectorStoreSize,
+  circuitBreakerState
+} from './metrics';
 
 export const createRoutes = (
   processor: ISREProcessor,
@@ -64,6 +76,16 @@ export const createRoutes = (
     }
 
     res.json(health);
+  });
+
+  // Prometheus metrics endpoint (no auth required)
+  router.get('/metrics', async (_req, res) => {
+    try {
+      res.setHeader('Content-Type', registry.contentType);
+      res.end(await registry.metrics());
+    } catch (err) {
+      res.status(500).end();
+    }
   });
 
   // Apply API Key Authentication
@@ -136,8 +158,14 @@ export const createRoutes = (
         contradictions = await enhancedComponents.contradictionDetector.detectSemanticContradictions([unit]);
       }
 
+      // Record contradiction metrics
+      for (const c of contradictions) {
+        contradictionsDetected.inc({ type: c.type });
+      }
+
       // 6. Store with deduplication
       await vectorStore.add(unit);
+      vectorStoreSize.set(await vectorStore.count());
 
       // 7. Log decision for audit trail
       if (enhancedComponents?.explainableAI) {
@@ -265,6 +293,10 @@ export const createRoutes = (
       const { query, limit, includeExplanation } = req.body;
 
       const results = await retrievalEngine.retrieve(query, undefined, { limit: limit || 5 });
+
+      // Record retrieval metrics
+      retrievals.inc({ status: 'success' });
+      retrievalDuration.observe((Date.now() - start) / 1000);
 
       let explanation;
       if (includeExplanation && enhancedComponents?.explainableAI) {
