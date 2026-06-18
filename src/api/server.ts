@@ -6,6 +6,7 @@ import { ISREProcessorImpl } from '../isre/processor';
 import { InMemoryVectorStore } from '../storage/memory_store';
 import { IntentAwareRetrievalEngine } from '../retrieval/engine';
 import { createRateLimiter, requestId } from './middleware/rateLimit';
+import { setupSwagger } from './swagger';
 
 import { ISREProcessor } from '../types';
 import { VectorStore } from '../storage/types';
@@ -25,6 +26,9 @@ export const createApp = (
 
   // Trust proxy for accurate req.ip behind load balancers
   app.set('trust proxy', 1);
+
+  // Swagger/OpenAPI docs (before other middleware)
+  setupSwagger(app);
 
   app.use(requestId);
   app.use(cors({
