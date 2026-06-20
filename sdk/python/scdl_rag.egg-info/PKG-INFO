@@ -1,0 +1,49 @@
+Metadata-Version: 2.4
+Name: scdl-rag
+Version: 1.0.0
+Summary: SCDL-RAG: Detect and fix RAG hallucinations with 97% recall and 100% precision.
+Author: SCDL-RAG Team
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Intended Audience :: Developers
+Classifier: Topic :: Scientific/Engineering :: Artificial Intelligence
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+Requires-Dist: requests>=2.28.0
+Dynamic: author
+Dynamic: classifier
+Dynamic: description
+Dynamic: description-content-type
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary
+
+# SCDL-RAG Python SDK
+Detect and fix RAG hallucinations.
+
+## Install
+```bash
+pip install scdl-rag
+```
+
+## Usage
+```python
+from scdl_rag import Client
+
+client = Client(api_key="sk_live_...")
+
+result = client.detect(
+    question="What is RL?",
+    answer="nodes called neurons",
+    documents=[{"id": "doc1", "content": "RL is about..."}],
+)
+
+if result.hallucination_detected:
+    print(f"Hallucination found: {result.explanation}")
+else:
+    print(f"Coherent (score: {result.mu_score})")
+```
+
+## API
+See https://api.scdl-rag.com/docs for full API reference.

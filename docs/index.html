@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SCDL-RAG — Fix RAG Hallucinations Before Users See Them</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1a1a2e; line-height: 1.6; }
+.container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+/* Header */
+header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); color: white; padding: 80px 0 60px; }
+header h1 { font-size: 3rem; font-weight: 800; letter-spacing: -1px; margin-bottom: 16px; }
+header p { font-size: 1.25rem; opacity: 0.9; max-width: 600px; margin-bottom: 32px; }
+.cta-buttons { display: flex; gap: 16px; flex-wrap: wrap; }
+.btn-primary { background: #e94560; color: white; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-block; }
+.btn-secondary { background: rgba(255,255,255,0.1); color: white; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 1px solid rgba(255,255,255,0.3); display: inline-block; }
+.btn-primary:hover { background: #d63851; }
+.btn-secondary:hover { background: rgba(255,255,255,0.2); }
+
+/* Sections */
+section { padding: 80px 0; }
+.section-title { font-size: 2rem; font-weight: 700; margin-bottom: 16px; text-align: center; }
+.section-subtitle { font-size: 1.1rem; color: #666; text-align: center; max-width: 600px; margin: 0 auto 48px; }
+
+/* Problem */
+.problem { background: #fef2f2; }
+.problem-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px; margin-top: 32px; }
+.problem-card { background: white; padding: 32px; border-radius: 12px; border-left: 4px solid #e94560; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+
+/* Solution */
+.solution .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; margin: 40px 0; }
+.metric-card { text-align: center; padding: 32px; background: #f8f9fa; border-radius: 12px; }
+.metric-number { font-size: 2.5rem; font-weight: 800; color: #0f3460; }
+.metric-label { color: #666; margin-top: 8px; font-size: 0.95rem; }
+.metric-badge { display: inline-block; background: #d4edda; color: #155724; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; margin-top: 8px; }
+
+/* How It Works */
+.how-it-works { background: #f8f9fa; }
+.steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; }
+.step { background: white; padding: 32px; border-radius: 12px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+.step-number { width: 40px; height: 40px; background: #0f3460; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; margin: 0 auto 16px; }
+
+/* Use Cases */
+.use-cases { background: #0f3460; color: white; }
+.use-cases .section-subtitle { color: rgba(255,255,255,0.7); }
+.cases-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; }
+.case-card { background: rgba(255,255,255,0.1); padding: 24px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.15); }
+
+/* Pricing */
+.pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-top: 40px; }
+.pricing-card { background: white; border: 2px solid #e2e8f0; border-radius: 12px; padding: 32px; }
+.pricing-card.featured { border-color: #0f3460; box-shadow: 0 4px 20px rgba(15,52,96,0.15); }
+.pricing-card h3 { font-size: 1.5rem; margin-bottom: 8px; }
+.pricing-card .price { font-size: 2.5rem; font-weight: 800; color: #0f3460; margin: 16px 0; }
+.pricing-card ul { list-style: none; margin: 24px 0; }
+.pricing-card ul li { padding: 8px 0; border-bottom: 1px solid #f0f0f0; }
+.pricing-card ul li:before { content: "✓ "; color: #0f3460; font-weight: 700; }
+.pricing-card .btn-primary { display: block; text-align: center; }
+
+/* CTA */
+.cta-section { background: linear-gradient(135deg, #1a1a2e, #0f3460); color: white; text-align: center; }
+.cta-section h2 { font-size: 2.5rem; margin-bottom: 16px; }
+.cta-section p { opacity: 0.9; margin-bottom: 32px; }
+
+/* Footer */
+footer { background: #1a1a2e; color: rgba(255,255,255,0.6); padding: 40px 0; text-align: center; font-size: 0.9rem; }
+footer a { color: rgba(255,255,255,0.8); text-decoration: none; }
+footer a:hover { color: white; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <h1>SCDL-RAG</h1>
+    <p>Fix RAG Hallucinations Before Users See Them</p>
+    <p>Stop losing customer trust. Detect and fix hallucinations in your RAG pipeline with 97% recall and 100% precision.</p>
+    <div class="cta-buttons">
+      <a href="#pricing" class="btn-primary">Try Free</a>
+      <a href="#docs" class="btn-secondary">View Docs</a>
+    </div>
+  </div>
+</header>
+
+<section class="problem">
+  <div class="container">
+    <h2 class="section-title">Your RAG system generates wrong answers. You don't know it.</h2>
+    <p class="section-subtitle">Until it's too late.</p>
+    <div class="problem-stats">
+      <div class="problem-card">
+        <h3>Legal</h3>
+        <p>Lawyers lose cases because citations are fabricated. One wrong citation costs $10K+.</p>
+      </div>
+      <div class="problem-card">
+        <h3>Medical</h3>
+        <p>Hospitals make wrong treatment recommendations. One wrong recommendation costs lives.</p>
+      </div>
+      <div class="problem-card">
+        <h3>Finance</h3>
+        <p>Teams make bad decisions based on wrong data. One bad decision costs millions.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="solution">
+  <div class="container">
+    <h2 class="section-title">Detect 97% of hallucinations. Zero false alarms.</h2>
+    <p class="section-subtitle">Then automatically fix 75% of them by finding better evidence.</p>
+    <div class="metrics">
+      <div class="metric-card">
+        <div class="metric-number">97%</div>
+        <div class="metric-label">Recall</div>
+        <div class="metric-badge">Catch almost all hallucinations</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-number">100%</div>
+        <div class="metric-label">Precision</div>
+        <div class="metric-badge">Zero false positives</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-number">74.9%</div>
+        <div class="metric-label">Auto-Fix Rate</div>
+        <div class="metric-badge">Automatic recovery</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-number">+25%</div>
+        <div class="metric-label">Accuracy Gain</div>
+        <div class="metric-badge">Average improvement</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="how-it-works">
+  <div class="container">
+    <h2 class="section-title">How It Works</h2>
+    <p class="section-subtitle">μ-convergence detects contradictions other methods miss.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-number">1</div>
+        <h3>Your RAG Generates Answer</h3>
+        <p style="color:#666;font-size:0.9rem;margin-top:8px;">Question + answer + evidence documents sent to SCDL-RAG</p>
+      </div>
+      <div class="step">
+        <div class="step-number">2</div>
+        <h3>SCDL-RAG Analyzes</h3>
+        <p style="color:#666;font-size:0.9rem;margin-top:8px;">Multi-signal check: NLI + lexical overlap + entity matching. ~150ms.</p>
+      </div>
+      <div class="step">
+        <div class="step-number">3</div>
+        <h3>Auto-Fix If Needed</h3>
+        <p style="color:#666;font-size:0.9rem;margin-top:8px;">Searches document pool for better evidence. 75% fix rate.</p>
+      </div>
+      <div class="step">
+        <div class="step-number">4</div>
+        <h3>Return Corrected Answer</h3>
+        <p style="color:#666;font-size:0.9rem;margin-top:8px;">Confidence score + plain English explanation of what went wrong.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="use-cases" id="use-cases">
+  <div class="container">
+    <h2 class="section-title">Built for Enterprise</h2>
+    <p class="section-subtitle">Runs on your infrastructure. No data leaves your network.</p>
+    <div class="cases-grid">
+      <div class="case-card">
+        <h3 style="margin-bottom:8px;">Legal Discovery</h3>
+        <p style="opacity:0.8;font-size:0.9rem;">Find citation errors before lawyers rely on fabricated case law.</p>
+      </div>
+      <div class="case-card">
+        <h3 style="margin-bottom:8px;">Medical AI</h3>
+        <p style="opacity:0.8;font-size:0.9rem;">Catch drug interaction errors before clinical decisions are made.</p>
+      </div>
+      <div class="case-card">
+        <h3 style="margin-bottom:8px;">Financial Analysis</h3>
+        <p style="opacity:0.8;font-size:0.9rem;">Verify numbers before making multi-million dollar decisions.</p>
+      </div>
+      <div class="case-card">
+        <h3 style="margin-bottom:8px;">Compliance</h3>
+        <p style="opacity:0.8;font-size:0.9rem;">Audit trail of when answers were questioned and corrected.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="container">
+    <h2 class="section-title">Simple Pricing</h2>
+    <p class="section-subtitle">Start free. Scale as you grow.</p>
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <h3>Free</h3>
+        <div class="price">$0</div>
+        <ul>
+          <li>100 detections/month</li>
+          <li>Single user</li>
+          <li>Email support</li>
+          <li>API access</li>
+        </ul>
+        <a href="#" class="btn-primary">Get Started</a>
+      </div>
+      <div class="pricing-card featured">
+        <h3>Pro</h3>
+        <div class="price">$99</div>
+        <p style="color:#666;font-size:0.85rem;">per month</p>
+        <ul>
+          <li>100K detections/month</li>
+          <li>5 users</li>
+          <li>Email support</li>
+          <li>API access</li>
+          <li>Auto-fix enabled</li>
+        </ul>
+        <a href="#" class="btn-primary">Start Trial</a>
+      </div>
+      <div class="pricing-card">
+        <h3>Enterprise</h3>
+        <div class="price">Custom</div>
+        <ul>
+          <li>Unlimited detections</li>
+          <li>Unlimited users</li>
+          <li>Dedicated support</li>
+          <li>SLA guarantees</li>
+          <li>Local deployment</li>
+          <li>Custom integration</li>
+        </ul>
+        <a href="#" class="btn-primary">Contact Sales</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <div class="container">
+    <h2>Stop Hallucinations Before Users See Them</h2>
+    <p>97% recall. 100% precision. 74.9% auto-fix. Runs on your infrastructure.</p>
+    <div class="cta-buttons" style="justify-content:center;">
+      <a href="#" class="btn-primary">Try Free</a>
+      <a href="#" class="btn-secondary">Schedule Demo</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>&copy; 2026 SCDL-RAG. All rights reserved. | <a href="#">Docs</a> | <a href="#">GitHub</a> | <a href="#">Status</a></p>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,61 @@
+question_id,question,ground_truth,predicted_answer,correct,f1_score,hallucination_detected,mu_score,chi_score,rho_score,latency_ms
+5a7a06935542990198eaf050,Which magazine was started first Arthur's Magazine or First for Women?,Arthur's Magazine,,0,0.0,0,1.0,0.0041,0.0517,0
+5a879ab05542996e4f30887e,The Oberoi family is part of a hotel company that has a head office in what city?,Delhi,,0,0.0,0,1.0,0.0033,0.0464,0
+5a8d7341554299441c6b9fe5,"Musician and satirist Allie Goertz wrote a song about the ""The Simpsons"" character Milhouse, who Matt Groening named after who?",President Richard Nixon,,0,0.0,0,1.0,0.0161,0.0472,0
+5a82171f5542990a1d231f4a, What nationality was James Henry Miller's wife?,American,,0,0.0,0,1.0,0.007,0.0542,0
+5a84dd955542997b5ce3ff79,"Cadmium Chloride is slightly soluble in this chemical, it is also called what?",alcohol,,0,0.0,0,1.0,0.0016,0.0461,0
+5a7e36045542991319bc9440,"Which tennis player won more Grand Slam titles, Henri Leconte or Jonathan Stark?",Jonathan Stark,,0,0.0,0,1.0,0.0005,0.0512,0
+5adf44985542993a75d2646d,Which genus of moth in the world's seventh-largest country contains only one species?,Crambidae,,0,0.0,0,1.0,0.0035,0.0491,0
+5a832c3455429954d2e2ec41,"Who was once considered the best kick boxer in the world, however he has been involved in a number of controversies relating to his ""unsportsmanlike conducts"" in the sport and crimes of violence outside of the ring.",Badr Hari,,0,0.0,0,1.0,0.0351,0.0476,0
+5a7d0db955429909bec76924,"The Dutch-Belgian television series that ""House of Anubis"" was based on first aired in what year?",2006,,0,0.0,0,1.0,0.0393,0.0551,0
+5a89372855429951533612e6,What is the length of the track where the 2013 Liqui Moly Bathurst 12 Hour was staged?,6.213 km long,,0,0.0,0,1.0,0.04,0.0449,0
+5abd90545542996e802b47d7,"Fast Cars, Danger, Fire and Knives includes guest appearances from which hip hop record executive?",Jaime Meline,,0,0.0,0,1.0,0.0462,0.0519,0
+5aba66c855429939ce03dcdb,"Gunmen from Laredo starred which narrator of ""Frontier""?",Walter Darwin Coy,,0,0.0,1,0.0507,0.9868,0.05,0
+5a7722d655429966f1a36c99,Where did the form of music played by Die Rhöner Säuwäntzt originate?,United States,,0,0.0,0,1.0,0.0032,0.0462,0
+5ade025e5542997dc790711e,In which American football game was Malcolm Smith named Most Valuable player?,Super Bowl XLVIII,Super Bowl XLVIII,1,1.0,0,1.0,0.0005,0.0462,0
+5ab381b155429969a97a816b,"What U.S Highway gives access to Zilpo Road, and is also known as Midland Trail?",US 60,,0,0.0,0,1.0,0.0015,0.0486,0
+5ae0d91e55429924de1b7198,"The 1988 American comedy film, The Great Outdoors, starred a four-time Academy Award nominee, who received a star on the Hollywood Walk of Fame in what year?",2006,,0,0.0,0,1.0,0.0274,0.0515,0
+5ac2a5d455429921a00ab01b,What are the names of the current members of  American heavy metal band who wrote the music for  Hurt Locker The Musical? ,"Hetfield and Ulrich, longtime lead guitarist Kirk Hammett, and bassist Robert Trujillo.",,0,0.0,0,1.0,0.0066,0.0477,0
+5adc1309554299438c868d3b,"Human Error"" is the season finale of the third season of a tv show that aired on what network?",Fox,,0,0.0,0,1.0,0.0332,0.0502,0
+5a83168855429966c78a6b2e,"Dua Lipa, an English singer, songwriter and model, the album spawned the number-one single ""New Rules"" is a song by English singer Dua Lipa from her eponymous debut studio album, released in what year?",2017,,0,0.0,0,1.0,0.009,0.0497,0
+5ab698885542995eadef002a,"American politician Joe Heck ran unsuccessfully against Democrat Catherine Cortez Masto, a woman who previously served as the 32nd Attorney General of where?",Nevada,,0,0.0,0,1.0,0.0012,0.0525,0
+5ab345db55429969a97a8122,"Which state does the drug stores, of which the CEO is Warren Bryant, are located?",Hawaii,,0,0.0,1,0.0793,0.6469,0.0513,0
+5adf732a5542993a75d264e9,Which  American politician did Donahue replaced ,Kelli Ward,,0,0.0,1,0.0805,0.6038,0.0486,0
+5ac2a912554299218029dae8,"Which band was founded first, Hole, the rock band that Courtney Love was a frontwoman of, or The Wolfhounds?",The Wolfhounds,,0,0.0,0,1.0,0.0276,0.049,0
+5a7272eb5542997f827839d7,How old is the female main protagonist of Catching Fire?,16-year-old,,0,0.0,0,1.0,0.0015,0.0491,0
+5ac2c3545542990b17b1548b,Chang Ucchin was born in korea during a time that ended with the conclusion of what? ,World War II,,0,0.0,0,1.0,0.0351,0.0462,0
+5ae3b4d05542992f92d82349,Who is the director of the 2003 film which has scenes in it filmed at the Quality Cafe in Los Angeles?,Todd Phillips,,0,0.0,0,1.0,0.0037,0.0484,0
+5a76a401554299373536012b,"New Faces of 1952 is a musical revue with songs and comedy skits, it helped jump start the career of which young performer, and American actress?",Carol Lawrence,,0,0.0,0,1.0,0.005,0.0506,0
+5ae3918b5542994393b9e709,Were Pavel Urysohn and Leonid Levin known for the same type of work?,no,,0,0.0,0,1.0,0.0082,0.0478,0
+5a8efd3c55429918e830d179,Are both The New Pornographers and Kings of Leon American rock bands?,no,no,1,1.0,0,1.0,0.0049,0.0507,0
+5a8b63755542997f31a41cfe,"750 7th Avenue and 101 Park Avenue, are located in which city?",New York City,New York City,1,1.0,0,1.0,0.0005,0.0478,0
+56be85543aeaaa14008c9063,When did Beyonce start becoming popular?,in the late 1990s,in the late 1990s,1,1.0,0,1.0,0.0009,0.0479,0
+56be85543aeaaa14008c9065,What areas did Beyonce compete in when she was growing up?,singing and dancing,singing and dancing,1,1.0,0,1.0,0.0013,0.0489,0
+56be85543aeaaa14008c9066,When did Beyonce leave Destiny's Child and become a solo singer?,2003,2003,1,1.0,0,1.0,0.0018,0.0504,0
+56bf6b0f3aeaaa14008c9601,In what city and state did Beyonce  grow up? ,"Houston, Texas","Houston, Texas",1,1.0,0,1.0,0.0005,0.0485,0
+56bf6b0f3aeaaa14008c9602,In which decade did Beyonce become famous?,late 1990s,late 1990s,1,1.0,0,1.0,0.0014,0.0474,0
+56bf6b0f3aeaaa14008c9603,In what R&B group was she the lead singer?,Destiny's Child,Destiny's Child,1,1.0,0,1.0,0.0002,0.0495,0
+56bf6b0f3aeaaa14008c9604,What album made her a worldwide known artist?,Dangerously in Love,Dangerously in Love,1,1.0,0,1.0,0.0043,0.0491,0
+56bf6b0f3aeaaa14008c9605,Who managed the Destiny's Child group?,Mathew Knowles,Mathew Knowles,1,1.0,0,1.0,0.0009,0.0527,0
+56d43c5f2ccc5a1400d830a9,When did Beyoncé rise to fame?,late 1990s,late 1990s,1,1.0,0,1.0,0.0006,0.0469,0
+56d43c5f2ccc5a1400d830aa,What role did Beyoncé have in Destiny's Child?,lead singer,lead singer,1,1.0,0,1.0,0.0005,0.0497,0
+56d43c5f2ccc5a1400d830ab,What was the first album Beyoncé released as a solo artist?,Dangerously in Love,Dangerously in Love,1,1.0,0,1.0,0.0008,0.0478,0
+56d43c5f2ccc5a1400d830ac,When did Beyoncé release Dangerously in Love?,2003,2003,1,1.0,0,1.0,0.0041,0.0508,0
+56d43c5f2ccc5a1400d830ad,How many Grammy awards did Beyoncé win for her first solo album?,five,five,1,1.0,0,1.0,0.0005,0.0504,0
+56d43ce42ccc5a1400d830b4,What was Beyoncé's role in Destiny's Child?,lead singer,lead singer,1,1.0,0,1.0,0.0004,0.0493,0
+56d43ce42ccc5a1400d830b5,What was the name of Beyoncé's first solo album?,Dangerously in Love,Dangerously in Love,1,1.0,0,1.0,0.0006,0.0493,0
+56be86cf3aeaaa14008c9076,"After her second solo album, what other entertainment venture did Beyonce explore?",acting,acting,1,1.0,0,1.0,0.0016,0.0497,0
+56be86cf3aeaaa14008c9078,Which artist did Beyonce marry?,Jay Z,Jay Z,1,1.0,0,1.0,0.0058,0.0504,0
+56be86cf3aeaaa14008c9079,"To set the record for Grammys, how many did Beyonce win?",six,six,1,1.0,0,1.0,0.0072,0.0485,0
+56bf6e823aeaaa14008c9627,For what movie did Beyonce receive  her first Golden Globe nomination?,Dreamgirls,Dreamgirls,1,1.0,0,1.0,0.0033,0.0491,0
+56bf6e823aeaaa14008c9629,When did Beyonce take a hiatus in her career and take control of her management?,2010,2010,1,1.0,1,0.1913,0.2484,0.0475,0
+56bf6e823aeaaa14008c962a,Which album was darker in tone from her previous work?,Beyoncé,Beyoncé,1,1.0,0,1.0,0.0034,0.0491,0
+56bf6e823aeaaa14008c962b,"After what movie portraying Etta James, did Beyonce create Sasha Fierce?",Cadillac Records,Cadillac Records,1,1.0,1,0.0497,0.9971,0.0496,0
+56d43da72ccc5a1400d830bd,When did Destiny's Child end their group act?,June 2005,June 2005,1,1.0,0,0.4173,0.1226,0.0512,0
+56d43da72ccc5a1400d830be,What was the name of Beyoncé's second solo album?,B'Day,B'Day,1,1.0,0,1.0,0.0041,0.0506,0
+56d43da72ccc5a1400d830bf,"What was Beyoncé's first acting job, in 2006?",Dreamgirls,Dreamgirls,1,1.0,0,1.0,0.0226,0.0509,0
+56d43da72ccc5a1400d830c0,Who is Beyoncé married to?,Jay Z,Jay Z,1,1.0,0,1.0,0.0017,0.0504,0
+56d43da72ccc5a1400d830c1,What is the name of Beyoncé's alter-ego?,Sasha Fierce,Sasha Fierce,1,1.0,0,1.0,0.0184,0.0477,0
+56be88473aeaaa14008c9080,"In her music, what are some recurring elements in them?","love, relationships, and monogamy","love, relationships, and monogamy",1,1.0,0,1.0,0.0004,0.049,0
+56be88473aeaaa14008c9083,Time magazine named her one of the most 100 what people of the century?,influential,influential,1,1.0,0,1.0,0.0007,0.0503,0
+56be88473aeaaa14008c9084,Which magazine declared her the most dominant woman musician?,Forbes,Forbes,1,1.0,0,1.0,0.0006,0.0469,0

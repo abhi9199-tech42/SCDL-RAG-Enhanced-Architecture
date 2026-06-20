@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SCDL-RAG — Detect & fix RAG hallucinations</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,sans-serif;color:#1a1a1a;line-height:1.6;background:#fff}
+.container{max-width:960px;margin:0 auto;padding:0 24px}
+
+nav{display:flex;justify-content:space-between;align-items:center;padding:20px 24px;max-width:960px;margin:0 auto}
+nav .logo{font-weight:700;font-size:1.2rem;color:#1a1a1a;text-decoration:none}
+nav .nav-links{display:flex;gap:24px}
+nav .nav-links a{color:#555;text-decoration:none;font-size:0.9rem}
+nav .nav-links a:hover{color:#1a1a1a}
+
+header{padding:80px 0 60px}
+header h1{font-size:2.8rem;font-weight:800;letter-spacing:-1px;margin-bottom:12px;line-height:1.15}
+header p{font-size:1.15rem;color:#555;max-width:580px;margin-bottom:28px}
+header .tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px}
+header .tags span{background:#f0f0f0;padding:4px 12px;border-radius:4px;font-size:0.8rem;color:#555}
+.cta-buttons{display:flex;gap:12px;flex-wrap:wrap}
+.btn{display:inline-block;padding:12px 28px;border-radius:6px;font-size:0.95rem;font-weight:600;text-decoration:none}
+.btn-primary{background:#1a1a1a;color:#fff}
+.btn-primary:hover{background:#333}
+.btn-secondary{background:#f0f0f0;color:#1a1a1a}
+.btn-secondary:hover{background:#e0e0e0}
+
+section{padding:60px 0}
+.section-title{font-size:1.6rem;font-weight:700;margin-bottom:24px}
+.section-subtitle{color:#666;max-width:580px;margin-bottom:32px;font-size:0.95rem}
+
+.metrics-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:40px}
+.metric-card{border:1px solid #e0e0e0;border-radius:8px;padding:24px;text-align:center}
+.metric-card .num{font-size:2.2rem;font-weight:800;color:#1a1a1a}
+.metric-card .label{color:#666;font-size:0.85rem;margin-top:4px}
+.metric-card .badge{display:inline-block;background:#e8f5e9;color:#2e7d32;padding:3px 10px;border-radius:12px;font-size:0.75rem;font-weight:600;margin-top:8px}
+
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.feature-card{border:1px solid #e0e0e0;border-radius:8px;padding:24px}
+.feature-card h3{font-size:1rem;font-weight:700;margin-bottom:6px}
+.feature-card p{font-size:0.85rem;color:#666}
+
+hr{border:none;border-top:1px solid #e0e0e0;margin:0}
+
+code{background:#f5f5f5;padding:2px 6px;border-radius:3px;font-size:0.85em;font-family:'SF Mono','Fira Code','Consolas',monospace}
+pre{background:#1a1a1a;color:#e0e0e0;padding:16px;border-radius:6px;overflow-x:auto;font-size:0.85rem;line-height:1.5;margin:12px 0}
+pre .c{color:#888}
+pre .k{color:#7ec8e3}
+pre .s{color:#a5d6a7}
+pre .o{color:#ffab91}
+
+.endpoints{margin:24px 0}
+.endpoint-row{padding:12px 0;border-bottom:1px solid #f0f0f0;display:flex;gap:16px;align-items:baseline}
+.endpoint-row:last-child{border:none}
+.endpoint-row .method{font-weight:700;font-size:0.8rem;min-width:50px;color:#1a1a1a}
+.endpoint-row .path{font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:0.85rem;color:#333}
+.endpoint-row .desc{color:#777;font-size:0.85rem}
+
+.perf-table{width:100%;border-collapse:collapse;font-size:0.85rem;margin:16px 0}
+.perf-table th{text-align:left;padding:8px 12px;border-bottom:2px solid #e0e0e0;font-weight:600;color:#555}
+.perf-table td{padding:8px 12px;border-bottom:1px solid #f0f0f0}
+.perf-table tr:last-child td{border-bottom:none}
+
+.install-tabs{display:flex;gap:4px;margin-bottom:0}
+.install-tabs button{padding:8px 16px;border:1px solid #e0e0e0;background:#fafafa;border-radius:4px 4px 0 0;font-size:0.85rem;cursor:pointer;color:#555}
+.install-tabs button.active{background:#fff;border-bottom-color:#fff;color:#1a1a1a;font-weight:600}
+.install-content{display:none}
+.install-content.active{display:block}
+.install-content pre{border-radius:0 6px 6px 6px;margin-top:-1px}
+
+footer{border-top:1px solid #e0e0e0;padding:32px 0;margin-top:40px;text-align:center;color:#888;font-size:0.85rem}
+footer a{color:#555;text-decoration:none}
+footer a:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="logo">SCDL-RAG</a>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#api">API</a>
+    <a href="#perf">Performance</a>
+    <a href="#install">Install</a>
+  </div>
+</nav>
+
+<header>
+  <div class="container">
+    <h1>Detect RAG hallucinations.<br>Fix them automatically.</h1>
+    <p>Production-grade API that catches contradictions between LLM answers and source documents with 97% recall and 100% precision. Auto-fixes 75% of hallucinations by finding better evidence.</p>
+    <div class="tags">
+      <span>97% recall</span>
+      <span>100% precision</span>
+      <span>75% auto-fix</span>
+      <span>67 req/s batch</span>
+      <span>air-gapped</span>
+    </div>
+    <div class="cta-buttons">
+      <a href="#install" class="btn btn-primary">Get Started</a>
+      <a href="#api" class="btn btn-secondary">API Reference</a>
+    </div>
+  </div>
+</header>
+
+<section id="features">
+  <div class="container">
+    <h2 class="section-title">Why SCDL-RAG</h2>
+    <p class="section-subtitle">Multi-signal contradiction detection using mu-convergence analysis — catches hallucinations that cosine-similarity methods miss.</p>
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="num">97%</div>
+        <div class="label">Recall</div>
+        <div class="badge">Catches almost everything</div>
+      </div>
+      <div class="metric-card">
+        <div class="num">100%</div>
+        <div class="label">Precision</div>
+        <div class="badge">Zero false positives</div>
+      </div>
+      <div class="metric-card">
+        <div class="num">74.9%</div>
+        <div class="label">Auto-Fix Rate</div>
+        <div class="badge">Self-healing pipeline</div>
+      </div>
+      <div class="metric-card">
+        <div class="num">67/s</div>
+        <div class="label">Batch Throughput</div>
+        <div class="badge">100 cases/batch</div>
+      </div>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <h3>Multi-Signal Detection</h3>
+        <p>NLI contradiction scoring + lexical overlap + entity matching. Chi-parameter combines all signals into one verdict.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Plain English Explanations</h3>
+        <p>Every verdict includes a human-readable explanation of which signal flagged the contradiction and why.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Auto-Improvement Loop</h3>
+        <p>When mu < 0.1, reads the chi breakdown, searches for better evidence, and recomputes. Fixes 3 out of 4 hallucinations.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Batch Endpoint</h3>
+        <p>Collapses N serial HTTP calls into 2. 6.8x throughput improvement. 0 errors tested up to 500 cases per batch.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Async Queue</h3>
+        <p>Fire-and-forget with configurable worker pool (default 4 threads). 55 tasks/s throughput. 0 failures at 5000 task backlog.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Enterprise Ready</h3>
+        <p>Bearer token auth, connection pooling (HTTP/2, 100 keepalive), zero degradation over 30-min sustained load. Air-gapped deployment.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<section id="api">
+  <div class="container">
+    <h2 class="section-title">API</h2>
+    <p class="section-subtitle">Six endpoints for detection, batch processing, fixing, async jobs, and health checks.</p>
+    <div class="endpoints">
+      <div class="endpoint-row">
+        <span class="method">POST</span>
+        <span class="path">/v1/detect</span>
+        <span class="desc">Detect hallucination in a single QA pair against evidence documents</span>
+      </div>
+      <div class="endpoint-row">
+        <span class="method">POST</span>
+        <span class="path">/v1/detect/batch</span>
+        <span class="desc">Batch detect up to 500 cases in one request</span>
+      </div>
+      <div class="endpoint-row">
+        <span class="method">POST</span>
+        <span class="path">/v1/detect-and-fix</span>
+        <span class="desc">Detect + auto-repair by searching a document pool</span>
+      </div>
+      <div class="endpoint-row">
+        <span class="method">POST</span>
+        <span class="path">/v1/batch/detect-and-fix</span>
+        <span class="desc">Batch version of detect-and-fix</span>
+      </div>
+      <div class="endpoint-row">
+        <span class="method">POST</span>
+        <span class="path">/v1/async/detect</span>
+        <span class="desc">Queue a detection job, returns task_id immediately</span>
+      </div>
+      <div class="endpoint-row">
+        <span class="method">GET</span>
+        <span class="path">/v1/async/result/{task_id}</span>
+        <span class="desc">Poll for async job result</span>
+      </div>
+      <div class="endpoint-row">
+        <span class="method">GET</span>
+        <span class="path">/v1/health</span>
+        <span class="desc">Health check with uptime and model status</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<section id="perf">
+  <div class="container">
+    <h2 class="section-title">Performance Benchmarks</h2>
+    <p class="section-subtitle">Load-tested against a production embedding service (Flask+waitress, 4 threads, INT8 NLI).</p>
+    <table class="perf-table">
+      <tr><th>Test</th><th>Configuration</th><th>Result</th></tr>
+      <tr><td>Sync breaking point</td><td>300 concurrent users</td><td>0 errors, p99=19s</td></tr>
+      <tr><td>Sync hard break</td><td>400+ concurrent</td><td>12% errors at 500</td></tr>
+      <tr><td>Batch breaking point</td><td>batch_size 5 to 500</td><td>0 errors all sizes</td></tr>
+      <tr><td>Batch sweet spot</td><td>100 cases/batch</td><td>67.4 req/s, 14.8ms/case</td></tr>
+      <tr><td>Enterprise mixed load</td><td>100 sync + 250 batch + 50 async</td><td>400/400 OK, 26.0 req/s</td></tr>
+      <tr><td>30-min endurance</td><td>4 concurrent sustained</td><td>4473 OK, 3 err (0.07%)</td></tr>
+      <tr><td>Async queue max</td><td>5000 tasks queued</td><td>55 tasks/s (4 workers)</td></tr>
+    </table>
+  </div>
+</section>
+
+<hr>
+
+<section id="install">
+  <div class="container">
+    <h2 class="section-title">Get Started</h2>
+    <p class="section-subtitle">Install the Python SDK or use the REST API directly. Runs on your infrastructure.</p>
+
+    <div class="install-tabs">
+      <button class="active" onclick="switchTab('python')">Python</button>
+      <button onclick="switchTab('javascript')">JavaScript</button>
+      <button onclick="switchTab('curl')">cURL</button>
+    </div>
+
+    <div id="tab-python" class="install-content active">
+<pre><span class="c"># Install</span>
+pip install scdl-rag
+
+<span class="c"># Use</span>
+<span class="k">from</span> scdl_rag <span class="k">import</span> SCDLRAG
+
+client <span class="o">=</span> SCDLRAG(api_key<span class="o">=</span><span class="s">"sk_..."</span>)
+result <span class="o">=</span> client.detect(
+    question<span class="o">=</span><span class="s">"What is the capital of France?"</span>,
+    answer<span class="o">=</span><span class="s">"The capital is London."</span>,
+    documents<span class="o">=</span>[{<span class="s">"id"</span>: <span class="s">"d1"</span>, <span class="s">"content"</span>: <span class="s">"Paris is the capital of France."</span>}]
+)
+print(result.hallucination_detected)  <span class="c"># True</span>
+print(result.mu_score)                <span class="c"># 0.42</span>
+print(result.explanation)             <span class="c"># "NLI: contradiction (0.92)"</span>
+</pre>
+    </div>
+
+    <div id="tab-javascript" class="install-content">
+<pre><span class="c">// Install</span>
+<span class="c">// npm install scdl-rag</span>
+
+<span class="k">import</span> { SCDLRAG } <span class="k">from</span> <span class="s">"scdl-rag"</span>;
+
+<span class="k">const</span> client <span class="o">=</span> <span class="k">new</span> SCDLRAG({ apiKey: <span class="s">"sk_..."</span> });
+<span class="k">const</span> result <span class="o">=</span> <span class="k">await</span> client.detect({
+  question: <span class="s">"What is the capital of France?"</span>,
+  answer: <span class="s">"The capital is London."</span>,
+  documents: [{ id: <span class="s">"d1"</span>, content: <span class="s">"Paris is the capital of France."</span> }]
+});
+console.log(result.hallucination_detected); <span class="c">// true</span>
+</pre>
+    </div>
+
+    <div id="tab-curl" class="install-content">
+<pre>curl http://localhost:8000/v1/detect \
+  -H <span class="s">"Authorization: Bearer sk_..."</span> \
+  -H <span class="s">"Content-Type: application/json"</span> \
+  -d <span class="s">'{
+    "question": "What is the capital of France?",
+    "answer": "The capital is London.",
+    "documents": [{"id": "d1", "content": "Paris is the capital of France."}]
+  }'</span>
+</pre>
+    </div>
+
+    <p style="margin-top:20px;color:#666;font-size:0.9rem;">Run locally: <code>git clone ... && pip install -r api/requirements.txt && uvicorn api.server:app</code></p>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>SCDL-RAG &mdash; Contradiction-Aware Retrieval Architecture for Reliable AI Reasoning. &copy; 2026. <a href="https://github.com/anomalyco/scdl-rag">GitHub</a></p>
+  </div>
+</footer>
+
+<script>
+function switchTab(name) {
+  document.querySelectorAll('.install-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.install-tabs button').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+
+</body>
+</html>
