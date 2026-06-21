@@ -1,4 +1,4 @@
-name: CI/CD v3 - Docker fix
+name: CI/CD
 
 on:
   push:
@@ -7,36 +7,27 @@ on:
     branches: [main]
 
 jobs:
-  test:
+  lint:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [22, 24]
     steps:
       - uses: actions/checkout@v4
 
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
         with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
+          python-version: "3.11"
 
       - name: Install dependencies
-        run: npm ci
+        run: pip install -r api/requirements.txt
 
-      - name: Build
-        run: npm run build
+      - name: Check Python syntax
+        run: python -m py_compile api/server.py api/core/mu_engine.py
 
-      - name: Run tests
-        run: npm test
-        env:
-          NODE_ENV: test
-
-      - name: Run lint
-        run: npm run lint || true
+      - name: Verify app imports
+        run: python -c "from api.server import app; print(f'FastAPI app loaded: {len(app.routes)} routes')"
 
   docker:
-    needs: test
+    needs: lint
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     permissions:
@@ -45,43 +36,43 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build Docker image
-        run: docker build -t scdl-rag:${{ github.sha }} .
+      - name: Build Docker images
+        run: docker compose -f docker/docker-compose.yml build --no-cache
 
-      - name: Test Docker image
+      - name: Start services
         run: |
-          docker run -d --name test-container \
-            -p 3000:3000 \
-            -e SCDL_API_KEY=test-key \
-            -e NODE_ENV=production \
-            scdl-rag:${{ github.sha }}
-          sleep 20
-          docker logs test-container
-          curl -f http://localhost:3000/api/health || (docker logs test-container && exit 1)
-          docker stop test-container
+          docker compose -f docker/docker-compose.yml up -d
+          echo "Waiting for embedding service to load models (up to 180s)..."
+          sleep 180
+
+      - name: Health check
+        run: |
+          curl -f http://localhost:8888/v1/health || (docker compose -f docker/docker-compose.yml logs api && docker compose -f docker/docker-compose.yml logs embedding && exit 1)
+
+      - name: Test detect endpoint
+        run: |
+          curl -s -X POST http://localhost:8888/v1/detect \
+            -H "Authorization: Bearer sk_live_local_test" \
+            -H "Content-Type: application/json" \
+            -d '{"question":"What is capital of France?","answer":"Paris","documents":[{"id":"d1","content":"Paris is the capital of France."}]}' | python -c "import sys,json; d=json.load(sys.stdin); assert d['hallucination_detected']==False; print(f'detect OK: mu={d[\"mu_score\"]}')"
+
+      - name: Test batch endpoint
+        run: |
+          curl -s -X POST http://localhost:8888/v1/detect/batch \
+            -H "Authorization: Bearer sk_live_local_test" \
+            -H "Content-Type: application/json" \
+            -d '{"cases":[{"id":"c1","question":"Q","answer":"A","documents":[{"id":"d1","content":"Paris capital"}]}]}' | python -c "import sys,json; d=json.load(sys.stdin); assert len(d['results'])==1; print(f'batch OK: {d[\"total_time_ms\"]}ms')"
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GHCR_PAT || secrets.GITHUB_TOKEN }}
-
-      - name: Set lowercase repo name
-        id: repo
-        run: echo "REPO_LOWER=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Push to GHCR
         run: |
-          set +e
-          docker tag scdl-rag:${{ github.sha }} ghcr.io/${{ steps.repo.outputs.REPO_LOWER }}:${{ github.sha }}
-          docker tag scdl-rag:${{ github.sha }} ghcr.io/${{ steps.repo.outputs.REPO_LOWER }}:latest
-          docker push ghcr.io/${{ steps.repo.outputs.REPO_LOWER }}:${{ github.sha }}
-          PUSH_RESULT=$?
-          docker push ghcr.io/${{ steps.repo.outputs.REPO_LOWER }}:latest
-          if [ $PUSH_RESULT -ne 0 ]; then
-            echo "Warning: GHCR push failed (likely org permissions). Image built and tested successfully."
-            exit 0
-          fi
-        env:
-          GHCR_PAT: ${{ secrets.GHCR_PAT }}
+          docker tag docker-api ghcr.io/${{ github.repository_owner }}/scdl-rag-api:${{ github.sha }}
+          docker tag docker-api ghcr.io/${{ github.repository_owner }}/scdl-rag-api:latest
+          docker push ghcr.io/${{ github.repository_owner }}/scdl-rag-api:${{ github.sha }} || echo "GHCR push skipped (permissions)"
+          docker push ghcr.io/${{ github.repository_owner }}/scdl-rag-api:latest || echo "GHCR push skipped (permissions)"
